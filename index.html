@@ -376,7 +376,12 @@
   }
 
   /* RESET */
-  .reset-row { text-align: right; margin: 12px 0 0; }
+  .reset-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 12px 0 0;
+  }
   .reset-btn {
     font-size: 12px;
     color: var(--text2);
@@ -390,6 +395,44 @@
     gap: 5px;
   }
   .reset-btn:hover { background: var(--surface2); }
+
+  /* ADVANCED BUTTON */
+  .adv-btn {
+    font-size: 12px;
+    font-weight: 500;
+    background: none;
+    border: 1px solid #C0392B;
+    color: #C0392B;
+    border-radius: var(--radius-sm);
+    padding: 6px 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+  }
+  .adv-btn:hover { background: #FDECEA; }
+  .adv-btn.active { background: #C0392B; color: #fff; border-color: #C0392B; }
+  .adv-btn.active:hover { background: #A93226; }
+
+  /* ADVANCED MODE THEME */
+  body.advanced { --green: #C0392B; --green-light: #FDECEA; --green-dark: #7B241C; --accent: #C0392B; }
+  body.advanced .hero-label { color: #E8877A; }
+  body.advanced .hero-title { color: #FDE9E7; }
+  body.advanced .hero-sub { color: #F0B3AC; }
+  body.advanced .bar-fill { background: linear-gradient(90deg, #C0392B, #E74C3C); }
+  body.advanced input[type=range]::-webkit-slider-thumb { background: #C0392B; box-shadow: 0 0 0 1px #C0392B; }
+  body.advanced input[type=range]::-moz-range-thumb { background: #C0392B; box-shadow: 0 0 0 1px #C0392B; }
+  body.advanced .ex-card.active { border-color: #C0392B; box-shadow: 0 0 0 3px rgba(192,57,43,0.08); }
+  body.advanced .hint:hover { border-color: #C0392B; color: #C0392B; }
+  body.advanced .green-icon { background: #FDECEA; color: #7B241C; }
+  body.advanced .gpill.on { background: #7B241C; color: #FDECEA; border-color: transparent; }
+  body.advanced .pts-pill { background: #FDECEA; color: #7B241C; }
+  body.advanced .ex-rate.pos { background: #FDECEA; color: #7B241C; }
+  @media (prefers-color-scheme: dark) {
+    body.advanced { --green: #E74C3C; --green-light: #4A1010; --green-dark: #E8877A; }
+    body.advanced .gpill.on { background: #C0392B; color: #fff; }
+  }
 
   @media (max-width: 520px) {
     .hints { grid-template-columns: repeat(2, 1fr); }
@@ -430,6 +473,9 @@
     </div>
     <div class="status-msg" id="statusMsg">Передвиньте ползунок нужного упражнения</div>
     <div class="reset-row">
+      <button class="adv-btn" id="advBtn" onclick="toggleAdvanced()">
+        <i class="ti ti-flame"></i> Продвинутый уровень
+      </button>
       <button class="reset-btn" onclick="resetAll()">
         <i class="ti ti-refresh"></i> Сбросить всё
       </button>
@@ -619,6 +665,9 @@ const exercises = [
 const vals = {};
 exercises.forEach(e => vals[e.id] = 0);
 let goal = 7000;
+let advancedMode = false;
+let currentBaseGoal = 7000;
+const BASE_GOALS = [7000, 8000, 9000, 10000];
 
 function totalPts() {
   return exercises.reduce((s, e) => s + vals[e.id] * e.pts, 0);
@@ -652,13 +701,28 @@ function updateUI() {
   });
 }
 
-function setGoal(g) {
-  goal = g;
-  document.getElementById('goalLabel').textContent = g.toLocaleString('ru');
-  [7000, 8000, 9000, 10000].forEach(v => {
-    document.getElementById('g' + v).className = 'gpill' + (g === v ? ' on' : '');
+function setGoal(baseG) {
+  currentBaseGoal = baseG;
+  goal = baseG * (advancedMode ? 3 : 1);
+  document.getElementById('goalLabel').textContent = goal.toLocaleString('ru');
+  BASE_GOALS.forEach(v => {
+    document.getElementById('g' + v).className = 'gpill' + (baseG === v ? ' on' : '');
   });
   updateUI();
+}
+
+function toggleAdvanced() {
+  advancedMode = !advancedMode;
+  document.body.classList.toggle('advanced', advancedMode);
+  const btn = document.getElementById('advBtn');
+  btn.classList.toggle('active', advancedMode);
+  btn.innerHTML = advancedMode
+    ? '<i class="ti ti-flame"></i> Продвинутый ✓'
+    : '<i class="ti ti-flame"></i> Продвинутый уровень';
+  BASE_GOALS.forEach(v => {
+    document.getElementById('g' + v).textContent = (v * (advancedMode ? 3 : 1)).toLocaleString('ru');
+  });
+  setGoal(currentBaseGoal);
 }
 
 function setVal(id, v) {
