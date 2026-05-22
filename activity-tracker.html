@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Трекер активности — шаги и эквиваленты</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.6.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F4F1EB;
+    --surface: #FFFEFA;
+    --surface2: #EDE9E1;
+    --border: rgba(0,0,0,0.1);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1A1915;
+    --text2: #5C5A54;
+    --text3: #999690;
+    --green: #1D9E75;
+    --green-light: #E1F5EE;
+    --green-dark: #085041;
+    --coral: #D85A30;
+    --coral-light: #FAECE7;
+    --accent: #1D9E75;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141412;
+      --surface: #1E1D1A;
+      --surface2: #272521;
+      --border: rgba(255,255,255,0.09);
+      --border2: rgba(255,255,255,0.16);
+      --text: #F0EDE6;
+      --text2: #9E9B93;
+      --text3: #5A5855;
+      --green-light: #04342C;
+      --green-dark: #9FE1CB;
+      --coral-light: #4A1B0C;
+    }
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--green-dark);
+    padding: 48px 24px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 30px,
+      rgba(255,255,255,0.03) 30px,
+      rgba(255,255,255,0.03) 31px
+    );
+  }
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #5DCAA5;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .hero-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(22px, 5vw, 34px);
+    font-weight: 700;
+    color: #E1F5EE;
+    line-height: 1.2;
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .hero-sub {
+    font-size: 14px;
+    color: #9FE1CB;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+    position: relative;
+  }
+
+  /* CONTAINER */
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  /* SCORE CARD */
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin: -28px auto 0;
+    position: relative;
+    max-width: 680px;
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+  @media (min-width: 712px) {
+    .score-card { margin-left: auto; margin-right: auto; }
+  }
+  .score-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .score-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .score-of {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 5px;
+  }
+  .goal-pills {
+    display: flex;
+    gap: 5px;
+    align-items: flex-start;
+    padding-top: 4px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .gpill {
+    padding: 6px 11px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .gpill:hover { background: var(--surface2); }
+  .gpill.on { background: var(--green-dark); color: #9FE1CB; border-color: transparent; }
+  @media (prefers-color-scheme: dark) {
+    .gpill.on { background: var(--green); color: #fff; }
+  }
+
+  /* BAR */
+  .bar-track {
+    height: 12px;
+    background: var(--surface2);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #1D9E75, #5DCAA5);
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  }
+  .bar-zones {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text3);
+    margin-bottom: 14px;
+  }
+  .status-msg {
+    font-size: 13px;
+    color: var(--text2);
+    text-align: center;
+    padding: 8px;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .status-msg.done {
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-weight: 500;
+  }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin: 32px 0 12px;
+  }
+
+  /* EXERCISE CARDS */
+  .ex-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 10px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .ex-card.active {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(29,158,117,0.08);
+  }
+  .ex-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .ex-icon-wrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+  .green-icon { background: #E1F5EE; color: #0F6E56; }
+  .coral-icon { background: #FAECE7; color: #993C1D; }
+  @media (prefers-color-scheme: dark) {
+    .green-icon { background: #04342C; color: #5DCAA5; }
+    .coral-icon { background: #4A1B0C; color: #F0997B; }
+  }
+  .ex-info { flex: 1; min-width: 0; }
+  .ex-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .ex-desc { font-size: 12px; color: var(--text2); }
+  .ex-rate {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: var(--surface2);
+    color: var(--text2);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .ex-rate.pos { background: var(--green-light); color: var(--green-dark); }
+
+  /* SLIDER */
+  .slider-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .slider-label { font-size: 12px; color: var(--text3); min-width: 18px; }
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--surface2);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--green);
+    border: 3px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--green);
+    cursor: pointer;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--green); border: 3px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--green); cursor: pointer;
+  }
+  .slider-readout {
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 52px;
+    text-align: right;
+    color: var(--text);
+  }
+  .hints {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .hint {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 6px 8px;
+    font-size: 11px;
+    color: var(--text2);
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+  .hint:hover { border-color: var(--green); color: var(--green); }
+  .hint b { display: block; font-size: 12px; font-weight: 500; color: var(--text); }
+
+  /* INFO TABLE */
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .info-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .info-table thead th {
+    background: var(--surface2);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  .info-table tbody tr { border-bottom: 1px solid var(--border); }
+  .info-table tbody tr:last-child { border-bottom: none; }
+  .info-table tbody td { padding: 11px 14px; color: var(--text); }
+  .info-table tbody td:not(:first-child) { color: var(--text2); }
+  .pts-pill {
+    display: inline-block;
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-weight: 500;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 5px;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 40px;
+    padding: 0 16px;
+    line-height: 1.7;
+  }
+
+  /* RESET */
+  .reset-row { text-align: right; margin: 12px 0 0; }
+  .reset-btn {
+    font-size: 12px;
+    color: var(--text2);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .reset-btn:hover { background: var(--surface2); }
+
+  @media (max-width: 520px) {
+    .hints { grid-template-columns: repeat(2, 1fr); }
+    .score-num { font-size: 32px; }
+    .hero { padding: 40px 16px 48px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-label">Похудение · активность</div>
+  <div class="hero-title">Трекер шагов<br>и эквивалентов</div>
+  <div class="hero-sub">1 шаг = 1 балл. Цель — 7 000–10 000 баллов в день.<br>Подбирайте активность под настроение.</div>
+</div>
+
+<div class="container">
+
+  <!-- SCORE CARD -->
+  <div class="score-card" id="scoreCard">
+    <div class="score-top">
+      <div>
+        <div class="score-num" id="totalPts">0</div>
+        <div class="score-of">баллов из <span id="goalLabel">7 000</span></div>
+      </div>
+      <div class="goal-pills">
+        <button class="gpill on" id="g7000" onclick="setGoal(7000)">7 000</button>
+        <button class="gpill" id="g8000" onclick="setGoal(8000)">8 000</button>
+        <button class="gpill" id="g9000" onclick="setGoal(9000)">9 000</button>
+        <button class="gpill" id="g10000" onclick="setGoal(10000)">10 000</button>
+      </div>
+    </div>
+    <div class="bar-track">
+      <div class="bar-fill" id="barFill" style="width:0%"></div>
+    </div>
+    <div class="bar-zones">
+      <span>0</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+    </div>
+    <div class="status-msg" id="statusMsg">Передвиньте ползунок нужного упражнения</div>
+    <div class="reset-row">
+      <button class="reset-btn" onclick="resetAll()">
+        <i class="ti ti-refresh"></i> Сбросить всё
+      </button>
+    </div>
+  </div>
+
+  <!-- EXERCISES -->
+  <div class="section-title" style="margin-top:36px">Выберите активность</div>
+
+  <div id="exCards"></div>
+
+  <!-- REFERENCE TABLE -->
+  <div class="section-title">Справочник — сколько нужно для цели</div>
+
+  <div class="info-card">
+    <table class="info-table">
+      <thead>
+        <tr>
+          <th>Упражнение</th>
+          <th>Для 7 000 б</th>
+          <th>Для 10 000 б</th>
+          <th>б/мин</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🚴 Велосипед</td>
+          <td>~42 мин</td>
+          <td>~60 мин</td>
+          <td><span class="pts-pill">167</span></td>
+        </tr>
+        <tr>
+          <td>🚶 Ходьба</td>
+          <td>~90 мин</td>
+          <td>~128 мин</td>
+          <td><span class="pts-pill">78</span></td>
+        </tr>
+        <tr>
+          <td>🌀 Эллипсоид</td>
+          <td>~45 мин</td>
+          <td>~64 мин</td>
+          <td><span class="pts-pill">156</span></td>
+        </tr>
+        <tr>
+          <td>🪜 Степпер</td>
+          <td>~49 мин</td>
+          <td>~70 мин</td>
+          <td><span class="pts-pill">144</span></td>
+        </tr>
+        <tr>
+          <td>💃 Танцы</td>
+          <td>~50 мин</td>
+          <td>~72 мин</td>
+          <td><span class="pts-pill">140</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="section-title">Как считается</div>
+
+  <div class="info-card">
+    <table class="info-table">
+      <thead>
+        <tr>
+          <th>Понятие</th>
+          <th>Значение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>10 000 шагов</td>
+          <td>≈ 450 ккал (человек ~70–75 кг)</td>
+        </tr>
+        <tr>
+          <td>1 шаг = 1 балл</td>
+          <td>≈ 0.045 ккал</td>
+        </tr>
+        <tr>
+          <td>1 ккал</td>
+          <td>≈ 22 балла</td>
+        </tr>
+        <tr>
+          <td>Цель похудения</td>
+          <td>7 000–10 000 б/день (315–450 ккал)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    Расчёт основан на среднем расходе ккал для человека 70–75 кг.<br>
+    Индивидуальные показатели зависят от веса, интенсивности и физической формы.
+  </div>
+
+</div>
+
+<script>
+const exercises = [
+  {
+    id: 'bike',
+    name: 'Велосипед',
+    desc: 'Умеренный темп, улица или велотренажёр',
+    meta: '~7.5 ккал/мин',
+    pts: 167,
+    icon: 'ti-bike',
+    iconClass: 'green-icon',
+    max: 75,
+    step: 5,
+    hints: [
+      { label: '20 мин', val: 20, pts: 3340 },
+      { label: '30 мин', val: 30, pts: 5010 },
+      { label: '42 мин', val: 40, pts: 6680 },
+      { label: '60 мин', val: 60, pts: 10020 },
+    ]
+  },
+  {
+    name: 'Ходьба',
+    desc: 'Обычный темп, улица или дорожка',
+    meta: '~3.5 ккал/мин',
+    pts: 78,
+    icon: 'ti-walk',
+    iconClass: 'green-icon',
+    max: 120,
+    step: 5,
+    hints: [
+      { label: '30 мин', val: 30, pts: 2340 },
+      { label: '60 мин', val: 60, pts: 4680 },
+      { label: '90 мин', val: 90, pts: 7020 },
+      { label: '2 часа', val: 120, pts: 9360 },
+    ]
+  },
+  {
+    id: 'ell',
+    name: 'Эллипсоид',
+    desc: 'Умеренная нагрузка, ровный темп',
+    meta: '~7 ккал/мин',
+    pts: 156,
+    icon: 'ti-ripple',
+    iconClass: 'green-icon',
+    max: 75,
+    step: 5,
+    hints: [
+      { label: '20 мин', val: 20, pts: 3120 },
+      { label: '30 мин', val: 30, pts: 4680 },
+      { label: '45 мин', val: 45, pts: 7020 },
+      { label: '60 мин', val: 60, pts: 9360 },
+    ]
+  },
+  {
+    id: 'step',
+    name: 'Степпер',
+    desc: 'Тренирует ягодицы, бёдра и икры',
+    meta: '~6.5 ккал/мин',
+    pts: 144,
+    icon: 'ti-stairs-up',
+    iconClass: 'green-icon',
+    max: 75,
+    step: 5,
+    hints: [
+      { label: '20 мин', val: 20, pts: 2880 },
+      { label: '30 мин', val: 30, pts: 4320 },
+      { label: '49 мин', val: 50, pts: 7200 },
+      { label: '60 мин', val: 60, pts: 8640 },
+    ]
+  },
+  {
+    id: 'dance',
+    name: 'Танцы (sexy dance)',
+    desc: '1 час = ~8 500 б — попадает в цель',
+    meta: '~6.3 ккал/мин',
+    pts: 140,
+    icon: 'ti-music',
+    iconClass: 'coral-icon',
+    max: 90,
+    step: 5,
+    hints: [
+      { label: '30 мин', val: 30, pts: 4200 },
+      { label: '50 мин', val: 50, pts: 7000 },
+      { label: '60 мин', val: 60, pts: 8400 },
+      { label: '72 мин', val: 72, pts: 10080 },
+    ]
+  },
+];
+
+const vals = {};
+exercises.forEach(e => vals[e.id] = 0);
+let goal = 7000;
+
+function totalPts() {
+  return exercises.reduce((s, e) => s + vals[e.id] * e.pts, 0);
+}
+
+function updateUI() {
+  const t = totalPts();
+  const pct = Math.min(100, (t / goal) * 100);
+  document.getElementById('totalPts').textContent = t.toLocaleString('ru');
+  document.getElementById('barFill').style.width = pct + '%';
+
+  const msgEl = document.getElementById('statusMsg');
+  let msg = '';
+  if (t === 0)           msg = 'Передвиньте ползунок нужного упражнения';
+  else if (t < goal*0.3) msg = 'Хорошее начало — продолжайте!';
+  else if (t < goal*0.65)msg = 'Больше половины пути!';
+  else if (t < goal)     msg = 'Финальный рывок — вы почти у цели!';
+  else                   msg = '🏆 Цель достигнута! Отличная работа!';
+  msgEl.textContent = msg;
+  msgEl.className = 'status-msg' + (t >= goal ? ' done' : '');
+
+  exercises.forEach(e => {
+    const earned = vals[e.id] * e.pts;
+    const rateEl = document.getElementById('rate-' + e.id);
+    const card = document.getElementById('card-' + e.id);
+    const ro = document.getElementById('ro-' + e.id);
+    rateEl.textContent = earned > 0 ? '+' + earned.toLocaleString('ru') + ' б' : e.meta;
+    rateEl.className = 'ex-rate' + (earned > 0 ? ' pos' : '');
+    card.className = 'ex-card' + (vals[e.id] > 0 ? ' active' : '');
+    ro.textContent = vals[e.id] + ' мин';
+  });
+}
+
+function setGoal(g) {
+  goal = g;
+  document.getElementById('goalLabel').textContent = g.toLocaleString('ru');
+  [7000, 8000, 9000, 10000].forEach(v => {
+    document.getElementById('g' + v).className = 'gpill' + (g === v ? ' on' : '');
+  });
+  updateUI();
+}
+
+function setVal(id, v) {
+  vals[id] = v;
+  document.getElementById('sl-' + id).value = v;
+  updateUI();
+}
+
+function resetAll() {
+  exercises.forEach(e => {
+    vals[e.id] = 0;
+    document.getElementById('sl-' + e.id).value = 0;
+  });
+  updateUI();
+}
+
+function buildCards() {
+  const container = document.getElementById('exCards');
+  exercises.forEach(e => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    card.id = 'card-' + e.id;
+    card.innerHTML = `
+      <div class="ex-head">
+        <div class="ex-icon-wrap ${e.iconClass}">
+          <i class="ti ${e.icon}"></i>
+        </div>
+        <div class="ex-info">
+          <div class="ex-name">${e.name}</div>
+          <div class="ex-desc">${e.desc}</div>
+        </div>
+        <div class="ex-rate" id="rate-${e.id}">${e.meta}</div>
+      </div>
+      <div class="slider-wrap">
+        <span class="slider-label">0</span>
+        <input type="range" id="sl-${e.id}" min="0" max="${e.max}" step="${e.step}" value="0"
+          oninput="vals['${e.id}']=+this.value; updateUI()" aria-label="Минуты для ${e.name}">
+        <span class="slider-label">${e.max}</span>
+        <span class="slider-readout" id="ro-${e.id}">0 мин</span>
+      </div>
+      <div class="hints">
+        ${e.hints.map(h => `
+          <div class="hint" onclick="setVal('${e.id}', ${h.val})">
+            <b>${h.label}</b>${h.pts.toLocaleString('ru')} б
+          </div>`).join('')}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+buildCards();
+updateUI();
+</script>
+</body>
+</html>
