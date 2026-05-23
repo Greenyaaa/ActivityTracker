@@ -850,7 +850,7 @@ async function checkNick(nick) {
   if (!/^[a-zA-Zа-яА-ЯёЁ0-9_]{2,20}$/.test(nick)) {
     el.textContent = '❌'; nickCheckOk = false; return;
   }
-  const { data } = await sb.from('profiles').select('id').eq('nickname', nick).single();
+  const { data } = await sb.from('profiles').select('id').eq('nickname', nick).maybeSingle();
   if (data) { el.textContent = '❌'; nickCheckOk = false; }
   else      { el.textContent = '✅'; nickCheckOk = true;  }
 }
@@ -934,7 +934,7 @@ async function login() {
   if (error) { err.textContent = error.message; err.classList.remove('hidden'); return; }
 
   currentUser = data.user;
-  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
   currentProfile = profile;
   afterLogin();
 }
@@ -958,7 +958,7 @@ async function signOut() {
 // ---- After login routing ----
 async function afterLogin() {
   if (!currentProfile) {
-    const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+    const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
     currentProfile = data;
   }
   if (!currentProfile) { showScreen('screen-auth'); return; } // no profile yet
@@ -1111,7 +1111,7 @@ async function loadTodayWorkout() {
   if (!currentUser) return;
   const today = todayStr();
   const { data } = await sb.from('workouts').select('*')
-    .eq('user_id', currentUser.id).eq('date', today).single();
+    .eq('user_id', currentUser.id).eq('date', today).maybeSingle();
   if (!data) {
     document.getElementById('saveStatus').textContent = '';
     return;
@@ -1171,7 +1171,7 @@ async function saveWorkout() {
 async function updateStreak(userId) {
   const today     = todayStr();
   const yesterday = yesterdayStr();
-  const { data: streak } = await sb.from('streaks').select('*').eq('user_id', userId).single();
+  const { data: streak } = await sb.from('streaks').select('*').eq('user_id', userId).maybeSingle();
 
   if (streak?.last_goal_date === today) return; // already counted today
 
@@ -1204,7 +1204,7 @@ function checkMilestone(n) {
 async function renderStreakWidget() {
   const widget = document.getElementById('streakWidget');
   if (!currentUser || !widget) return;
-  const { data: streak } = await sb.from('streaks').select('*').eq('user_id', currentUser.id).single();
+  const { data: streak } = await sb.from('streaks').select('*').eq('user_id', currentUser.id).maybeSingle();
   const cur = streak?.current_streak || 0;
   const rec = streak?.longest_streak || 0;
   const maxMs = 31;
@@ -1403,7 +1403,7 @@ async function loadFriends() {
   const friendWorkouts = {};
   for (const fp of (friendProfiles || [])) {
     const { data: fw } = await sb.from('workouts').select('*')
-      .eq('user_id', fp.id).eq('date', today).single();
+      .eq('user_id', fp.id).eq('date', today).maybeSingle();
     if (fw) friendWorkouts[fp.id] = fw;
   }
   const { data: friendStreaks } = await sb.from('streaks').select('*').in('user_id', friendIds);
@@ -1492,7 +1492,7 @@ async function createGroup(name, desc) {
 async function showInviteModal(groupId) {
   const nick = prompt('Ник пользователя для приглашения:');
   if (!nick) return;
-  const { data: profile } = await sb.from('profiles').select('*').eq('nickname', nick.trim()).single();
+  const { data: profile } = await sb.from('profiles').select('*').eq('nickname', nick.trim()).maybeSingle();
   if (!profile) { showToast('Пользователь не найден'); return; }
   await sb.from('group_members').insert({
     id: uid(), group_id: groupId, user_id: profile.id,
@@ -1502,7 +1502,7 @@ async function showInviteModal(groupId) {
 }
 
 async function openGroupDashboard(groupId) {
-  const { data: group } = await sb.from('groups').select('*').eq('id', groupId).single();
+  const { data: group } = await sb.from('groups').select('*').eq('id', groupId).maybeSingle();
   const { data: members } = await sb.from('group_members').select('*')
     .eq('group_id', groupId).eq('status', 'accepted');
   if (!members?.length) { showToast('В группе пока нет участников'); return; }
@@ -1511,8 +1511,8 @@ async function openGroupDashboard(groupId) {
   const today = todayStr();
   let html = `<b>${group?.name || 'Группа'}</b><br><br>`;
   for (const p of (profiles || [])) {
-    const { data: fw } = await sb.from('workouts').select('*').eq('user_id', p.id).eq('date', today).single();
-    const { data: streak } = await sb.from('streaks').select('*').eq('user_id', p.id).single();
+    const { data: fw } = await sb.from('workouts').select('*').eq('user_id', p.id).eq('date', today).maybeSingle();
+    const { data: streak } = await sb.from('streaks').select('*').eq('user_id', p.id).maybeSingle();
     const pts = fw?.total_points || 0;
     const done = fw?.goal_achieved;
     html += `${done ? '✅' : '⬜'} ${p.nickname}: ${pts.toLocaleString('ru')} б | 🔥${streak?.current_streak || 0}\n`;
@@ -1588,7 +1588,7 @@ async function renderProfile() {
 
   // Stats
   const { data: workouts } = await sb.from('workouts').select('*').eq('user_id', currentUser.id);
-  const { data: streak }   = await sb.from('streaks').select('*').eq('user_id', currentUser.id).single();
+  const { data: streak }   = await sb.from('streaks').select('*').eq('user_id', currentUser.id).maybeSingle();
   const total   = workouts?.length || 0;
   const goals   = workouts?.filter(w => w.goal_achieved).length || 0;
   const bestStr = streak?.longest_streak || 0;
@@ -1633,7 +1633,7 @@ async function init() {
   if (!session) { showScreen('screen-auth'); return; }
 
   currentUser = session.user;
-  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
   currentProfile = profile;
 
   if (!currentProfile) { showScreen('screen-auth'); return; }
