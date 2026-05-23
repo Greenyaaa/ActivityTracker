@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
 <title>ActivityTracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -19,6 +19,7 @@
   --red: #C0392B; --red-light: #FDECEA;
   --radius: 14px; --radius-sm: 8px;
   --nav-h: 64px; --header-h: 56px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -32,22 +33,22 @@
 body {
   background: var(--bg); color: var(--text);
   font-family: 'Inter', system-ui, sans-serif;
-  min-height: 100vh; overflow-x: hidden;
+  min-height: 100dvh; overflow-x: hidden;
 }
 .hidden { display: none !important; }
 
 /* === SCREENS === */
-.screen { min-height: 100vh; }
+.screen { min-height: 100dvh; }
 #screen-auth {
   display: flex; flex-direction: column; align-items: center;
   padding: 40px 20px 60px; max-width: 420px; margin: 0 auto;
 }
 #screen-waiting {
   display: flex; align-items: center; justify-content: center;
-  min-height: 100vh; padding: 24px;
+  min-height: 100dvh; padding: 24px;
 }
 #screen-app {
-  display: flex; flex-direction: column; min-height: 100vh;
+  display: flex; flex-direction: column; min-height: 100dvh;
 }
 
 /* === AUTH === */
@@ -139,13 +140,15 @@ body {
 .app-header-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
 /* === TAB CONTENT === */
-.tab-content { flex: 1; overflow-y: auto; padding-bottom: calc(var(--nav-h) + 16px); }
+.tab-content { flex: 1; overflow-y: auto; padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 16px); }
 .tab { display: none; padding: 16px; max-width: 560px; margin: 0 auto; }
 .tab.active { display: block; }
 
 /* === BOTTOM NAV === */
 .bottom-nav {
-  height: var(--nav-h); background: var(--surface);
+  height: calc(var(--nav-h) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: var(--surface);
   border-top: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-around;
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
@@ -408,7 +411,7 @@ input[type=range]::-moz-range-thumb {
 /* === LOADING SCREEN === */
 #screen-loading {
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; min-height: 100vh; gap: 20px;
+  justify-content: center; min-height: 100dvh; gap: 20px;
   animation: screenFadeIn .3s ease forwards;
 }
 .loader-icon {
@@ -430,7 +433,7 @@ input[type=range]::-moz-range-thumb {
 
 /* === TOAST === */
 #toast-container {
-  position: fixed; bottom: calc(var(--nav-h) + 12px); left: 50%;
+  position: fixed; bottom: calc(var(--nav-h) + var(--safe-bottom) + 12px); left: 50%;
   transform: translateX(-50%); z-index: 9999; display: flex;
   flex-direction: column; align-items: center; gap: 8px; pointer-events: none;
 }
