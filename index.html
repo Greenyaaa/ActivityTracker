@@ -889,7 +889,7 @@ async function register() {
   const btn  = document.getElementById('btn-create');
   btn.disabled = true; btn.textContent = 'Создаём…';
 
-  const email = `${nick}@activitytracker.local`;
+  const email = `${nick}@activitytracker.app`;
   const { data, error } = await sb.auth.signUp({ email, password: padPin(pin) });
   if (error) {
     err.textContent = error.message; err.classList.remove('hidden');
@@ -929,7 +929,7 @@ async function login() {
   const err  = document.getElementById('login-error');
   err.classList.add('hidden');
 
-  const email = `${nick}@activitytracker.local`;
+  const email = `${nick}@activitytracker.app`;
   const { data, error } = await sb.auth.signInWithPassword({ email, password: padPin(pin) });
   if (error) { err.textContent = error.message; err.classList.remove('hidden'); return; }
 

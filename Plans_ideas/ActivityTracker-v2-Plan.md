@@ -17,11 +17,11 @@ Supabase Project #2
 ```
 
 **Принцип аутентификации — Ник + PIN:**
-Supabase Auth используется со схемой `nickname@activitytracker.local` как email и PIN как пароль. Пользователь никогда не видит «email» — только ник и PIN. Сессия хранится в `localStorage` автоматически через Supabase SDK. При входе с нового устройства — вводит тот же ник + PIN, попадает в тот же аккаунт.
+Supabase Auth используется со схемой `nickname@activitytracker.app` как email и PIN как пароль. Пользователь никогда не видит «email» — только ник и PIN. Сессия хранится в `localStorage` автоматически через Supabase SDK. При входе с нового устройства — вводит тот же ник + PIN, попадает в тот же аккаунт.
 
 ```
-Регистрация:  sb.auth.signUp({ email: `${ник}@activitytracker.local`, password: PIN })
-Вход:         sb.auth.signInWithPassword({ email: `${ник}@activitytracker.local`, password: PIN })
+Регистрация:  sb.auth.signUp({ email: `${ник}@activitytracker.app`, password: PIN })
+Вход:         sb.auth.signInWithPassword({ email: `${ник}@activitytracker.app`, password: PIN })
 Сессия:       хранится в localStorage автоматически (Supabase SDK)
 Новое устройство: вход по нику + PIN → та же сессия, те же данные
 ```
