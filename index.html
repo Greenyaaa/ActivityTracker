@@ -789,11 +789,11 @@ function showScreen(id) {
 }
 
 function showTab(id) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => { t.classList.remove('active'); t.classList.remove('hidden'); t.style.display = 'none'; });
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   const tab = document.getElementById('tab-' + id);
   const btn = document.getElementById('nav-' + id);
-  if (tab) tab.classList.add('active');
+  if (tab) { tab.style.display = ''; tab.classList.add('active'); }
   if (btn) btn.classList.add('active');
   currentTab = id;
   if (id === 'history')  loadHistory();
