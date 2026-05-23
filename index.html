@@ -393,10 +393,23 @@ input[type=range]::-moz-range-thumb {
 .btn-sm.red { background: transparent; color: var(--red); border-color: var(--red); }
 .btn-sm:disabled { opacity: .45; cursor: not-allowed; }
 
+/* === SCREEN TRANSITIONS === */
+@keyframes screenFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+@keyframes screenFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+.screen-enter { animation: screenFadeIn .28s cubic-bezier(.4,0,.2,1) forwards; }
+.screen-exit  { animation: screenFadeOut .18s ease forwards; pointer-events: none; }
+
 /* === LOADING SCREEN === */
 #screen-loading {
   display: flex; flex-direction: column; align-items: center;
   justify-content: center; min-height: 100vh; gap: 20px;
+  animation: screenFadeIn .3s ease forwards;
 }
 .loader-icon {
   width: 64px; height: 64px; border-radius: 20px;
@@ -812,9 +825,31 @@ function showToast(msg, duration = 3000) {
 // ROUTER
 // ================================================================
 function showScreen(id) {
-  ['screen-loading','screen-auth','screen-waiting','screen-app'].forEach(s => {
-    document.getElementById(s).classList.toggle('hidden', s !== id);
-  });
+  const all = ['screen-loading','screen-auth','screen-waiting','screen-app'];
+  const current = all.find(s => !document.getElementById(s).classList.contains('hidden'));
+
+  const doShow = () => {
+    all.forEach(s => {
+      const el = document.getElementById(s);
+      el.classList.remove('screen-enter', 'screen-exit');
+      el.classList.toggle('hidden', s !== id);
+    });
+    // Trigger enter animation on next frame so display:block takes effect first
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.getElementById(id).classList.add('screen-enter');
+      });
+    });
+  };
+
+  if (current && current !== id) {
+    // Fade out current screen, then switch
+    const el = document.getElementById(current);
+    el.classList.add('screen-exit');
+    setTimeout(doShow, 160); // matches screen-exit duration (180ms, small buffer)
+  } else {
+    doShow();
+  }
 }
 
 function showTab(id) {
@@ -1658,7 +1693,15 @@ async function setDefaultGoal(val) {
 async function init() {
   buildAvatarGrid();
 
+  const loadStart = Date.now();
+  const minLoader = 400; // ms — лоадер виден минимум столько, переход не выглядит как глюк
+
   const { data: { session } } = await sb.auth.getSession();
+
+  // Ждём остаток минимального времени если сессия загрузилась слишком быстро
+  const elapsed = Date.now() - loadStart;
+  if (elapsed < minLoader) await new Promise(r => setTimeout(r, minLoader - elapsed));
+
   if (!session) { showScreen('screen-auth'); return; }
 
   currentUser = session.user;
