@@ -2,678 +2,1053 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Трекер активности — шаги и эквиваленты</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>ActivityTracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.6.0/dist/tabler-icons.min.css">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+/* === RESET & VARIABLES === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F4F1EB; --surface: #FFFEFA; --surface2: #EDE9E1;
+  --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+  --text: #1A1915; --text2: #5C5A54; --text3: #999690;
+  --green: #1D9E75; --green-light: #E1F5EE; --green-dark: #085041;
+  --coral: #D85A30; --coral-light: #FAECE7;
+  --red: #C0392B; --red-light: #FDECEA;
+  --radius: 14px; --radius-sm: 8px;
+  --nav-h: 64px; --header-h: 56px;
+}
+@media (prefers-color-scheme: dark) {
   :root {
-    --bg: #F4F1EB;
-    --surface: #FFFEFA;
-    --surface2: #EDE9E1;
-    --border: rgba(0,0,0,0.1);
-    --border2: rgba(0,0,0,0.18);
-    --text: #1A1915;
-    --text2: #5C5A54;
-    --text3: #999690;
-    --green: #1D9E75;
-    --green-light: #E1F5EE;
-    --green-dark: #085041;
-    --coral: #D85A30;
-    --coral-light: #FAECE7;
-    --accent: #1D9E75;
-    --radius: 14px;
-    --radius-sm: 8px;
+    --bg: #141412; --surface: #1E1D1A; --surface2: #272521;
+    --border: rgba(255,255,255,0.09); --border2: rgba(255,255,255,0.16);
+    --text: #F0EDE6; --text2: #9E9B93; --text3: #5A5855;
+    --green-light: #04342C; --green-dark: #9FE1CB;
+    --coral-light: #4A1B0C; --red-light: #3B0E0E;
   }
+}
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh; overflow-x: hidden;
+}
+.hidden { display: none !important; }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #141412;
-      --surface: #1E1D1A;
-      --surface2: #272521;
-      --border: rgba(255,255,255,0.09);
-      --border2: rgba(255,255,255,0.16);
-      --text: #F0EDE6;
-      --text2: #9E9B93;
-      --text3: #5A5855;
-      --green-light: #04342C;
-      --green-dark: #9FE1CB;
-      --coral-light: #4A1B0C;
-    }
-  }
+/* === SCREENS === */
+.screen { min-height: 100vh; }
+#screen-auth {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 40px 20px 60px; max-width: 420px; margin: 0 auto;
+}
+#screen-waiting {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 24px;
+}
+#screen-app {
+  display: flex; flex-direction: column; min-height: 100vh;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', system-ui, sans-serif;
-    min-height: 100vh;
-    padding: 0 0 60px;
-  }
+/* === AUTH === */
+.auth-logo { text-align: center; margin-bottom: 32px; }
+.auth-logo-icon {
+  width: 64px; height: 64px; border-radius: 20px;
+  background: var(--green-dark); color: var(--green-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; margin: 0 auto 12px;
+}
+.auth-logo-title {
+  font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 700;
+}
+.auth-tabs {
+  display: flex; gap: 4px; background: var(--surface2);
+  border-radius: 10px; padding: 4px; width: 100%; margin-bottom: 28px;
+}
+.auth-tab {
+  flex: 1; padding: 9px; border: none; background: transparent;
+  border-radius: 7px; font-size: 14px; font-weight: 500; cursor: pointer;
+  color: var(--text2); transition: all .2s;
+}
+.auth-tab.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+#auth-register, #auth-login { width: 100%; }
+.auth-step { width: 100%; }
+.step-label { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 8px; }
+.input-wrap { position: relative; margin-bottom: 4px; }
+.input-wrap input {
+  width: 100%; padding: 12px 14px; border: 1.5px solid var(--border2);
+  border-radius: var(--radius-sm); background: var(--surface);
+  font-size: 15px; color: var(--text); outline: none; transition: border-color .2s;
+}
+.input-wrap input:focus { border-color: var(--green); }
+.nick-status {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  font-size: 18px;
+}
+.row-gap { display: flex; gap: 10px; margin-top: 16px; }
+.row-gap .btn-outline { flex: 1; } .row-gap .btn-primary { flex: 2; }
 
-  /* HERO */
-  .hero {
-    background: var(--green-dark);
-    padding: 48px 24px 36px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 30px,
-      rgba(255,255,255,0.03) 30px,
-      rgba(255,255,255,0.03) 31px
-    );
-  }
-  .hero-label {
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #5DCAA5;
-    margin-bottom: 12px;
-    position: relative;
-  }
-  .hero-title {
-    font-family: 'Unbounded', sans-serif;
-    font-size: clamp(22px, 5vw, 34px);
-    font-weight: 700;
-    color: #E1F5EE;
-    line-height: 1.2;
-    position: relative;
-    margin-bottom: 10px;
-  }
-  .hero-sub {
-    font-size: 14px;
-    color: #9FE1CB;
-    max-width: 480px;
-    margin: 0 auto;
-    line-height: 1.6;
-    position: relative;
-  }
+/* Avatar grid */
+.avatar-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  margin-bottom: 14px;
+}
+.avatar-option {
+  aspect-ratio: 1; border-radius: 50%; overflow: hidden; cursor: pointer;
+  border: 3px solid transparent; transition: border-color .2s, transform .15s;
+  background: var(--surface2);
+}
+.avatar-option img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-option.selected { border-color: var(--green); transform: scale(1.06); }
+.avatar-style-row { display: flex; justify-content: center; margin-bottom: 16px; }
 
-  /* CONTAINER */
-  .container {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 0 16px;
-  }
+/* Role cards */
+.role-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 4px; }
+.role-card {
+  padding: 14px 16px; border: 1.5px solid var(--border2);
+  border-radius: var(--radius); cursor: pointer; transition: all .2s;
+  background: var(--surface);
+}
+.role-card.active { border-color: var(--green); background: var(--green-light); }
+.role-icon { font-size: 24px; margin-bottom: 4px; }
+.role-name { font-weight: 600; font-size: 15px; }
+.role-desc { font-size: 13px; color: var(--text2); margin-top: 2px; }
 
-  /* SCORE CARD */
-  .score-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    margin: -28px auto 0;
-    position: relative;
-    max-width: 680px;
-    margin-left: 16px;
-    margin-right: 16px;
-  }
-  @media (min-width: 712px) {
-    .score-card { margin-left: auto; margin-right: auto; }
-  }
-  .score-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 18px;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .score-num {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 42px;
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1;
-    letter-spacing: -0.02em;
-  }
-  .score-of {
-    font-size: 13px;
-    color: var(--text2);
-    margin-top: 5px;
-  }
-  .goal-pills {
-    display: flex;
-    gap: 5px;
-    align-items: flex-start;
-    padding-top: 4px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-  .gpill {
-    padding: 6px 11px;
-    font-size: 12px;
-    font-weight: 500;
-    border: 1px solid var(--border2);
-    border-radius: 20px;
-    background: transparent;
-    color: var(--text2);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .gpill:hover { background: var(--surface2); }
-  .gpill.on { background: var(--green-dark); color: #9FE1CB; border-color: transparent; }
-  @media (prefers-color-scheme: dark) {
-    .gpill.on { background: var(--green); color: #fff; }
-  }
+/* Login hints */
+.hint-text { font-size: 12px; color: var(--text3); text-align: center; margin-top: 16px; line-height: 1.6; }
+.error-msg { color: var(--red); font-size: 13px; margin-top: 8px; padding: 8px 12px; background: var(--red-light); border-radius: var(--radius-sm); }
 
-  /* BAR */
-  .bar-track {
-    height: 12px;
-    background: var(--surface2);
-    border-radius: 6px;
-    overflow: hidden;
-    margin-bottom: 6px;
-  }
-  .bar-fill {
-    height: 100%;
-    border-radius: 6px;
-    background: linear-gradient(90deg, #1D9E75, #5DCAA5);
-    transition: width 0.4s cubic-bezier(.4,0,.2,1);
-  }
-  .bar-zones {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    color: var(--text3);
-    margin-bottom: 14px;
-  }
-  .status-msg {
-    font-size: 13px;
-    color: var(--text2);
-    text-align: center;
-    padding: 8px;
-    background: var(--surface2);
-    border-radius: var(--radius-sm);
-    min-height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-  }
-  .status-msg.done {
-    background: var(--green-light);
-    color: var(--green-dark);
-    font-weight: 500;
-  }
+/* === WAITING SCREEN === */
+.waiting-wrap { text-align: center; max-width: 340px; }
+.waiting-wrap img, .waiting-wrap .avatar-img { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 16px; display: block; }
+.waiting-title { font-family: 'Unbounded', sans-serif; font-size: 18px; margin-bottom: 10px; }
+.waiting-text { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 24px; }
 
-  /* SECTION TITLE */
-  .section-title {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin: 32px 0 12px;
-  }
+/* === APP HEADER === */
+.app-header {
+  height: var(--header-h); background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; position: sticky; top: 0; z-index: 100;
+}
+.app-header-title { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; }
+.app-header-avatar {
+  width: 36px; height: 36px; border-radius: 50%; overflow: hidden;
+  cursor: pointer; background: var(--surface2); border: 2px solid var(--border2);
+}
+.app-header-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-  /* EXERCISE CARDS */
-  .ex-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    margin-bottom: 10px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .ex-card.active {
-    border-color: var(--green);
-    box-shadow: 0 0 0 3px rgba(29,158,117,0.08);
-  }
-  .ex-head {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 16px;
-  }
-  .ex-icon-wrap {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 20px;
-  }
-  .green-icon { background: #E1F5EE; color: #0F6E56; }
-  .coral-icon { background: #FAECE7; color: #993C1D; }
-  @media (prefers-color-scheme: dark) {
-    .green-icon { background: #04342C; color: #5DCAA5; }
-    .coral-icon { background: #4A1B0C; color: #F0997B; }
-  }
-  .ex-info { flex: 1; min-width: 0; }
-  .ex-name {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 2px;
-  }
-  .ex-desc { font-size: 12px; color: var(--text2); }
-  .ex-rate {
-    font-size: 12px;
-    font-weight: 500;
-    padding: 3px 9px;
-    border-radius: 6px;
-    background: var(--surface2);
-    color: var(--text2);
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .ex-rate.pos { background: var(--green-light); color: var(--green-dark); }
+/* === TAB CONTENT === */
+.tab-content { flex: 1; overflow-y: auto; padding-bottom: calc(var(--nav-h) + 16px); }
+.tab { display: none; padding: 16px; max-width: 560px; margin: 0 auto; }
+.tab.active { display: block; }
 
-  /* SLIDER */
-  .slider-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .slider-label { font-size: 12px; color: var(--text3); min-width: 18px; }
-  input[type=range] {
-    flex: 1;
-    -webkit-appearance: none;
-    height: 6px;
-    border-radius: 3px;
-    background: var(--surface2);
-    outline: none;
-    cursor: pointer;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--green);
-    border: 3px solid var(--surface);
-    box-shadow: 0 0 0 1px var(--green);
-    cursor: pointer;
-  }
-  input[type=range]::-moz-range-thumb {
-    width: 20px; height: 20px; border-radius: 50%;
-    background: var(--green); border: 3px solid var(--surface);
-    box-shadow: 0 0 0 1px var(--green); cursor: pointer;
-  }
-  .slider-readout {
-    font-size: 13px;
-    font-weight: 500;
-    min-width: 52px;
-    text-align: right;
-    color: var(--text);
-  }
-  .hints {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-  }
-  .hint {
-    background: var(--surface2);
-    border-radius: var(--radius-sm);
-    padding: 6px 8px;
-    font-size: 11px;
-    color: var(--text2);
-    text-align: center;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: all 0.15s;
-    line-height: 1.4;
-  }
-  .hint:hover { border-color: var(--green); color: var(--green); }
-  .hint b { display: block; font-size: 12px; font-weight: 500; color: var(--text); }
+/* === BOTTOM NAV === */
+.bottom-nav {
+  height: var(--nav-h); background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-around;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+}
+.nav-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 8px 12px; border: none; background: none; cursor: pointer;
+  color: var(--text3); font-size: 11px; position: relative; transition: color .2s;
+}
+.nav-btn .ti { font-size: 22px; }
+.nav-btn.active { color: var(--green); }
+.nav-badge {
+  position: absolute; top: 4px; right: 8px;
+  background: var(--red); color: #fff; font-size: 10px;
+  min-width: 16px; height: 16px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; padding: 0 4px;
+}
 
-  /* INFO TABLE */
-  .info-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    margin-bottom: 10px;
-  }
-  .info-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .info-table thead th {
-    background: var(--surface2);
-    padding: 10px 14px;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text3);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--border);
-  }
-  .info-table tbody tr { border-bottom: 1px solid var(--border); }
-  .info-table tbody tr:last-child { border-bottom: none; }
-  .info-table tbody td { padding: 11px 14px; color: var(--text); }
-  .info-table tbody td:not(:first-child) { color: var(--text2); }
-  .pts-pill {
-    display: inline-block;
-    background: var(--green-light);
-    color: var(--green-dark);
-    font-weight: 500;
-    font-size: 12px;
-    padding: 2px 8px;
-    border-radius: 5px;
-  }
+/* === STREAK WIDGET === */
+.streak-widget {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px; margin-bottom: 14px;
+}
+.streak-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.streak-main { font-size: 15px; font-weight: 600; }
+.streak-record { font-size: 12px; color: var(--text3); }
+.streak-bar-wrap { position: relative; height: 8px; background: var(--surface2); border-radius: 4px; margin-bottom: 6px; }
+.streak-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--green), #5DCAA5); transition: width .4s; }
+.streak-milestones { display: flex; justify-content: space-between; }
+.streak-ms {
+  font-size: 10px; color: var(--text3); display: flex; flex-direction: column;
+  align-items: center; gap: 1px;
+}
+.streak-ms.reached { color: var(--green); }
+.streak-ms-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); }
+.streak-ms.reached .streak-ms-dot { background: var(--green); }
 
-  /* FOOTER */
-  .footer {
-    text-align: center;
-    font-size: 12px;
-    color: var(--text3);
-    margin-top: 40px;
-    padding: 0 16px;
-    line-height: 1.7;
-  }
+/* === SCORE CARD === */
+.score-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px; margin-bottom: 14px;
+}
+.score-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+.score-num { font-family: 'Unbounded', sans-serif; font-size: 38px; font-weight: 700; line-height: 1; color: var(--green); }
+.score-of { font-size: 13px; color: var(--text2); margin-top: 4px; }
+.goal-pills { display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-end; max-width: 180px; }
+.gpill {
+  padding: 5px 10px; border: 1.5px solid var(--border2); border-radius: 20px;
+  background: transparent; font-size: 12px; font-weight: 600; cursor: pointer;
+  color: var(--text2); transition: all .15s;
+}
+.gpill.on { background: var(--green-dark); color: var(--green-light); border-color: transparent; }
+.bar-track { height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; margin-bottom: 6px; }
+.bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), #5DCAA5); border-radius: 5px; transition: width .3s; }
+.bar-zones { display: flex; justify-content: space-between; font-size: 10px; color: var(--text3); margin-bottom: 10px; }
+.status-msg { font-size: 13px; color: var(--text2); text-align: center; min-height: 20px; }
+.status-msg.done { color: var(--green); font-weight: 600; }
+.reset-row { display: flex; gap: 8px; margin-top: 12px; }
+.adv-btn {
+  flex: 1; padding: 8px 10px; border: 1.5px solid var(--border2); border-radius: var(--radius-sm);
+  background: transparent; font-size: 12px; font-weight: 600; cursor: pointer;
+  color: var(--text2); display: flex; align-items: center; justify-content: center; gap: 5px;
+}
+.adv-btn.active { border-color: var(--red); color: var(--red); background: var(--red-light); }
+.reset-btn {
+  padding: 8px 12px; border: 1.5px solid var(--border2); border-radius: var(--radius-sm);
+  background: transparent; font-size: 12px; cursor: pointer; color: var(--text3);
+  display: flex; align-items: center; gap: 5px;
+}
 
-  /* RESET */
-  .reset-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 12px 0 0;
-  }
-  .reset-btn {
-    font-size: 12px;
-    color: var(--text2);
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 6px 14px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .reset-btn:hover { background: var(--surface2); }
+/* === EXERCISE CARDS === */
+.section-title { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin: 18px 0 10px; }
+.ex-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 14px; margin-bottom: 10px; transition: border-color .2s;
+}
+.ex-card.active { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,.07); }
+.ex-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.ex-icon-wrap {
+  width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center;
+  justify-content: center; font-size: 20px; flex-shrink: 0;
+}
+.green-icon { background: var(--green-light); color: var(--green-dark); }
+.coral-icon { background: var(--coral-light); color: var(--coral); }
+.ex-info { flex: 1; min-width: 0; }
+.ex-name { font-size: 14px; font-weight: 600; }
+.ex-desc { font-size: 12px; color: var(--text2); }
+.ex-rate {
+  font-size: 12px; color: var(--text3); text-align: right; flex-shrink: 0;
+  padding: 3px 7px; border-radius: 6px; transition: all .2s;
+}
+.ex-rate.pos { background: var(--green-light); color: var(--green-dark); font-weight: 600; }
+.slider-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.slider-label { font-size: 11px; color: var(--text3); min-width: 18px; }
+input[type=range] {
+  flex: 1; -webkit-appearance: none; appearance: none; height: 6px;
+  background: var(--surface2); border-radius: 3px; cursor: pointer; outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 0 1px var(--green); cursor: pointer;
+}
+input[type=range]::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%; border: none;
+  background: var(--green); cursor: pointer;
+}
+.slider-readout { font-size: 13px; font-weight: 500; min-width: 46px; text-align: right; }
+.hints { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.hint {
+  padding: 6px 4px; border: 1px solid var(--border2); border-radius: var(--radius-sm);
+  text-align: center; cursor: pointer; font-size: 11px; color: var(--text2);
+  transition: border-color .15s, color .15s; line-height: 1.4;
+}
+.hint b { display: block; font-size: 12px; color: var(--text); }
+.hint:hover { border-color: var(--green); color: var(--green); }
 
-  /* ADVANCED BUTTON */
-  .adv-btn {
-    font-size: 12px;
-    font-weight: 500;
-    background: none;
-    border: 1px solid #C0392B;
-    color: #C0392B;
-    border-radius: var(--radius-sm);
-    padding: 6px 14px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: all 0.2s;
-  }
-  .adv-btn:hover { background: #FDECEA; }
-  .adv-btn.active { background: #C0392B; color: #fff; border-color: #C0392B; }
-  .adv-btn.active:hover { background: #A93226; }
+/* === SAVE BUTTON === */
+.save-wrap { margin-top: 20px; text-align: center; }
+.save-status { font-size: 13px; color: var(--text2); margin-bottom: 10px; min-height: 20px; }
+.btn-save {
+  width: 100%; padding: 15px; background: var(--green); color: #fff;
+  border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: opacity .2s;
+}
+.btn-save:hover { opacity: .88; }
+.btn-save:disabled { opacity: .5; cursor: not-allowed; }
 
-  /* ADVANCED MODE THEME */
-  body.advanced { --green: #C0392B; --green-light: #FDECEA; --green-dark: #7B241C; --accent: #C0392B; }
-  body.advanced .hero-label { color: #E8877A; }
-  body.advanced .hero-title { color: #FDE9E7; }
-  body.advanced .hero-sub { color: #F0B3AC; }
-  body.advanced .bar-fill { background: linear-gradient(90deg, #C0392B, #E74C3C); }
-  body.advanced input[type=range]::-webkit-slider-thumb { background: #C0392B; box-shadow: 0 0 0 1px #C0392B; }
-  body.advanced input[type=range]::-moz-range-thumb { background: #C0392B; box-shadow: 0 0 0 1px #C0392B; }
-  body.advanced .ex-card.active { border-color: #C0392B; box-shadow: 0 0 0 3px rgba(192,57,43,0.08); }
-  body.advanced .hint:hover { border-color: #C0392B; color: #C0392B; }
-  body.advanced .green-icon { background: #FDECEA; color: #7B241C; }
-  body.advanced .gpill.on { background: #7B241C; color: #FDECEA; border-color: transparent; }
-  body.advanced .pts-pill { background: #FDECEA; color: #7B241C; }
-  body.advanced .ex-rate.pos { background: #FDECEA; color: #7B241C; }
-  @media (prefers-color-scheme: dark) {
-    body.advanced { --green: #E74C3C; --green-light: #4A1010; --green-dark: #E8877A; }
-    body.advanced .gpill.on { background: #C0392B; color: #fff; }
-  }
+/* === HISTORY === */
+.history-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
+}
+.history-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.history-date { font-weight: 600; font-size: 14px; }
+.history-pts { font-family: 'Unbounded', sans-serif; font-size: 18px; color: var(--green); }
+.history-goal-badge {
+  font-size: 11px; padding: 2px 8px; border-radius: 10px;
+  font-weight: 600;
+}
+.history-goal-badge.achieved { background: var(--green-light); color: var(--green-dark); }
+.history-goal-badge.not-achieved { background: var(--surface2); color: var(--text3); }
+.history-exercises { display: flex; flex-wrap: wrap; gap: 6px; }
+.history-ex-tag {
+  font-size: 12px; padding: 3px 8px; background: var(--surface2);
+  border-radius: 6px; color: var(--text2);
+}
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text3); }
+.empty-state .ti { font-size: 48px; margin-bottom: 12px; display: block; }
+.empty-state p { font-size: 14px; }
 
-  @media (max-width: 520px) {
-    .hints { grid-template-columns: repeat(2, 1fr); }
-    .score-num { font-size: 32px; }
-    .hero { padding: 40px 16px 48px; }
-  }
+/* === FRIENDS === */
+.search-wrap { margin-bottom: 14px; }
+.search-wrap input {
+  width: 100%; padding: 11px 14px; border: 1.5px solid var(--border2);
+  border-radius: var(--radius-sm); background: var(--surface); font-size: 14px;
+  color: var(--text); outline: none;
+}
+.search-wrap input:focus { border-color: var(--green); }
+.user-card {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px; margin-bottom: 8px;
+}
+.user-card-avatar { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+.user-card-avatar img { width: 100%; height: 100%; }
+.user-card-info { flex: 1; }
+.user-card-nick { font-weight: 600; font-size: 14px; }
+.user-card-meta { font-size: 12px; color: var(--text3); }
+.friend-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
+}
+.friend-card.goal-done { border-color: var(--green); }
+.friend-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.friend-pts { font-weight: 700; font-size: 15px; }
+.friend-bar-wrap { height: 6px; background: var(--surface2); border-radius: 3px; margin-bottom: 6px; }
+.friend-bar-fill { height: 100%; border-radius: 3px; background: var(--green); transition: width .3s; }
+.friend-streak { font-size: 12px; color: var(--text3); }
+
+/* === PROFILE === */
+.profile-header { text-align: center; padding: 24px 0 16px; }
+.profile-header .avatar-img { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px; display: block; }
+.profile-nick { font-family: 'Unbounded', sans-serif; font-size: 18px; font-weight: 700; }
+.profile-role { font-size: 13px; color: var(--text2); margin-top: 4px; }
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px; text-align: center;
+}
+.stat-num { font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 700; color: var(--green); }
+.stat-label { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.settings-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+}
+.setting-row { display: flex; align-items: center; justify-content: space-between; }
+.setting-row span { font-size: 14px; font-weight: 500; }
+.goal-pills.small .gpill { font-size: 11px; padding: 4px 8px; }
+
+/* === GROUPS === */
+.group-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
+}
+.group-name { font-weight: 600; font-size: 15px; }
+.group-meta { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+/* === ADMIN === */
+.approval-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
+}
+.approval-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+/* === BUTTONS === */
+.btn-primary {
+  padding: 11px 18px; background: var(--green); color: #fff;
+  border: none; border-radius: var(--radius-sm); font-size: 14px;
+  font-weight: 600; cursor: pointer; width: 100%; transition: opacity .2s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn-primary:hover { opacity: .88; }
+.btn-outline {
+  padding: 11px 18px; background: transparent; color: var(--text);
+  border: 1.5px solid var(--border2); border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 500; cursor: pointer; transition: border-color .2s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn-outline:hover { border-color: var(--green); }
+.btn-danger {
+  padding: 11px 18px; background: transparent; color: var(--red);
+  border: 1.5px solid var(--red); border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: background .2s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn-danger:hover { background: var(--red-light); }
+.btn-sm {
+  padding: 7px 12px; border-radius: var(--radius-sm); font-size: 13px;
+  font-weight: 600; cursor: pointer; border: 1.5px solid; transition: all .15s;
+}
+.btn-sm.green { background: var(--green); color: #fff; border-color: var(--green); }
+.btn-sm.outline { background: transparent; color: var(--text2); border-color: var(--border2); }
+.btn-sm.red { background: transparent; color: var(--red); border-color: var(--red); }
+.btn-sm:disabled { opacity: .45; cursor: not-allowed; }
+
+/* === TOAST === */
+#toast-container {
+  position: fixed; bottom: calc(var(--nav-h) + 12px); left: 50%;
+  transform: translateX(-50%); z-index: 9999; display: flex;
+  flex-direction: column; align-items: center; gap: 8px; pointer-events: none;
+}
+.toast {
+  background: var(--text); color: var(--bg); padding: 12px 20px;
+  border-radius: 24px; font-size: 14px; font-weight: 500;
+  white-space: nowrap; animation: toastIn .3s ease;
+  max-width: 320px; text-align: center;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* === ADVANCED MODE === */
+body.advanced .score-num { color: var(--red); }
+body.advanced .bar-fill { background: linear-gradient(90deg, #C0392B, #E74C3C); }
+body.advanced input[type=range]::-webkit-slider-thumb { background: var(--red); box-shadow: 0 0 0 1px var(--red); }
+body.advanced input[type=range]::-moz-range-thumb { background: var(--red); }
+body.advanced .ex-card.active { border-color: var(--red); box-shadow: 0 0 0 3px rgba(192,57,43,.08); }
+body.advanced .hint:hover { border-color: var(--red); color: var(--red); }
+body.advanced .green-icon { background: var(--red-light); color: #7B241C; }
+body.advanced .gpill.on { background: #7B241C; color: #FDECEA; border-color: transparent; }
+body.advanced .ex-rate.pos { background: var(--red-light); color: #7B241C; }
+body.advanced .btn-save { background: var(--red); }
+body.advanced .streak-bar-fill { background: linear-gradient(90deg, var(--red), #E74C3C); }
+body.advanced .streak-ms.reached { color: var(--red); }
+body.advanced .streak-ms.reached .streak-ms-dot { background: var(--red); }
+@media (prefers-color-scheme: dark) {
+  body.advanced { --red: #E74C3C; --red-light: #4A1010; }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 520px) {
+  .hints { grid-template-columns: repeat(2, 1fr); }
+  .score-num { font-size: 32px; }
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 360px) {
+  .goal-pills { max-width: 140px; }
+  .gpill { font-size: 11px; padding: 4px 7px; }
+}
 </style>
 </head>
 <body>
 
-<div class="hero">
-  <div class="hero-label">Похудение · активность</div>
-  <div class="hero-title">Трекер шагов<br>и эквивалентов</div>
-  <div class="hero-sub">1 шаг = 1 балл. Цель — 7 000–10 000 баллов в день.<br>Подбирайте активность под настроение.</div>
-</div>
+<div id="toast-container"></div>
 
-<div class="container">
+<div id="app">
 
-  <!-- SCORE CARD -->
-  <div class="score-card" id="scoreCard">
-    <div class="score-top">
-      <div>
-        <div class="score-num" id="totalPts">0</div>
-        <div class="score-of">баллов из <span id="goalLabel">7 000</span></div>
+  <!-- ===== AUTH SCREEN ===== -->
+  <div id="screen-auth" class="screen">
+    <div class="auth-logo">
+      <div class="auth-logo-icon"><i class="ti ti-bolt"></i></div>
+      <div class="auth-logo-title">ActivityTracker</div>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="authTabReg" onclick="switchAuthTab('register')">Новый аккаунт</button>
+      <button class="auth-tab" id="authTabLogin" onclick="switchAuthTab('login')">Войти</button>
+    </div>
+
+    <!-- REGISTER FLOW -->
+    <div id="auth-register">
+      <!-- Step 1: Avatar -->
+      <div class="auth-step" id="reg-step-1">
+        <div class="step-label">Выберите аватарку</div>
+        <div class="avatar-grid" id="avatarGrid"></div>
+        <div class="avatar-style-row">
+          <button class="btn-outline" style="width:auto;padding:8px 18px" onclick="shuffleAvatars()">
+            <i class="ti ti-refresh"></i> Перемешать
+          </button>
+        </div>
+        <button class="btn-primary" style="margin-top:16px" onclick="goRegStep(2)">Далее →</button>
       </div>
-      <div class="goal-pills">
-        <button class="gpill on" id="g7000" onclick="setGoal(7000)">7 000</button>
-        <button class="gpill" id="g8000" onclick="setGoal(8000)">8 000</button>
-        <button class="gpill" id="g9000" onclick="setGoal(9000)">9 000</button>
-        <button class="gpill" id="g10000" onclick="setGoal(10000)">10 000</button>
+
+      <!-- Step 2: Nick + PIN -->
+      <div class="auth-step hidden" id="reg-step-2">
+        <div class="step-label">Придумайте ник</div>
+        <div class="input-wrap">
+          <input type="text" id="reg-nick" placeholder="буквы, цифры, _" maxlength="20" autocomplete="off"
+            oninput="debounceNickCheck(this.value)">
+          <span class="nick-status" id="nickStatus"></span>
+        </div>
+        <div style="margin-top:14px">
+          <div class="step-label">PIN (4–6 цифр)</div>
+          <div class="input-wrap">
+            <input type="password" id="reg-pin" placeholder="••••" maxlength="6" inputmode="numeric" autocomplete="new-password">
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <div class="step-label">Повторите PIN</div>
+          <div class="input-wrap">
+            <input type="password" id="reg-pin2" placeholder="••••" maxlength="6" inputmode="numeric" autocomplete="new-password">
+          </div>
+        </div>
+        <div id="reg-step2-error" class="error-msg hidden"></div>
+        <div class="row-gap">
+          <button class="btn-outline" onclick="goRegStep(1)">← Назад</button>
+          <button class="btn-primary" onclick="goRegStep(3)">Далее →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Role -->
+      <div class="auth-step hidden" id="reg-step-3">
+        <div class="step-label">Выберите роль</div>
+        <div class="role-cards">
+          <div class="role-card active" id="role-card-user" onclick="selectRole('user')">
+            <div class="role-icon">👤</div>
+            <div class="role-name">Пользователь</div>
+            <div class="role-desc">Трекер активности, друзья, стрики</div>
+          </div>
+          <div class="role-card" id="role-card-trainer" onclick="selectRole('trainer')">
+            <div class="role-icon">🏋️</div>
+            <div class="role-name">Тренер</div>
+            <div class="role-desc">Группы и дашборд участников (требует подтверждения Админа)</div>
+          </div>
+        </div>
+        <div id="reg-step3-error" class="error-msg hidden"></div>
+        <div class="row-gap" style="margin-top:16px">
+          <button class="btn-outline" onclick="goRegStep(2)">← Назад</button>
+          <button class="btn-primary" id="btn-create" onclick="register()">Создать аккаунт</button>
+        </div>
       </div>
     </div>
-    <div class="bar-track">
-      <div class="bar-fill" id="barFill" style="width:0%"></div>
+
+    <!-- LOGIN -->
+    <div id="auth-login" class="hidden">
+      <div class="step-label">Ник</div>
+      <div class="input-wrap">
+        <input type="text" id="login-nick" placeholder="ваш ник" autocomplete="username">
+      </div>
+      <div style="margin-top:12px">
+        <div class="step-label">PIN</div>
+        <div class="input-wrap">
+          <input type="password" id="login-pin" placeholder="••••" inputmode="numeric" autocomplete="current-password"
+            onkeydown="if(event.key==='Enter') login()">
+        </div>
+      </div>
+      <div id="login-error" class="error-msg hidden"></div>
+      <button class="btn-primary" style="margin-top:16px" onclick="login()">Войти</button>
+      <p class="hint-text">Используйте тот же ник и PIN с любого устройства.<br>Если PIN утерян — аккаунт не восстанавливается.</p>
     </div>
-    <div class="bar-zones">
-      <span>0</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+  </div>
+
+  <!-- ===== WAITING SCREEN ===== -->
+  <div id="screen-waiting" class="screen hidden">
+    <div class="waiting-wrap">
+      <div id="waitingAvatar"></div>
+      <div class="waiting-title">Заявка на рассмотрении</div>
+      <div class="waiting-text">Ваш аккаунт тренера ожидает подтверждения Администратора.<br>Обычно это занимает до 24 часов.</div>
+      <button class="btn-danger" onclick="signOut()"><i class="ti ti-logout"></i> Выйти</button>
     </div>
-    <div class="status-msg" id="statusMsg">Передвиньте ползунок нужного упражнения</div>
-    <div class="reset-row">
-      <button class="adv-btn" id="advBtn" onclick="toggleAdvanced()">
-        <i class="ti ti-flame"></i> Продвинутый уровень
+  </div>
+
+  <!-- ===== MAIN APP ===== -->
+  <div id="screen-app" class="screen hidden">
+    <div class="app-header">
+      <div class="app-header-title" id="headerTitle">ActivityTracker</div>
+      <div class="app-header-avatar" id="headerAvatar" onclick="showTab('profile')"></div>
+    </div>
+
+    <div class="tab-content">
+
+      <!-- TAB: TRACKER -->
+      <div id="tab-tracker" class="tab active">
+        <div id="streakWidget" class="streak-widget"></div>
+
+        <div class="score-card">
+          <div class="score-top">
+            <div>
+              <div class="score-num" id="totalPts">0</div>
+              <div class="score-of">баллов из <span id="goalLabel">7 000</span></div>
+            </div>
+            <div class="goal-pills">
+              <button class="gpill on" id="g7000" onclick="setGoal(7000)">7 000</button>
+              <button class="gpill" id="g8000" onclick="setGoal(8000)">8 000</button>
+              <button class="gpill" id="g9000" onclick="setGoal(9000)">9 000</button>
+              <button class="gpill" id="g10000" onclick="setGoal(10000)">10 000</button>
+            </div>
+          </div>
+          <div class="bar-track"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+          <div class="bar-zones"><span>0</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
+          <div class="status-msg" id="statusMsg">Передвиньте ползунок нужного упражнения</div>
+          <div class="reset-row">
+            <button class="adv-btn" id="advBtn" onclick="toggleAdvanced()">
+              <i class="ti ti-flame"></i> Продвинутый уровень
+            </button>
+            <button class="reset-btn" onclick="resetAll()">
+              <i class="ti ti-refresh"></i> Сбросить
+            </button>
+          </div>
+        </div>
+
+        <div class="section-title">Выберите активность</div>
+        <div id="exCards"></div>
+
+        <div class="save-wrap">
+          <div id="saveStatus" class="save-status"></div>
+          <button class="btn-save" id="btnSave" onclick="saveWorkout()">
+            <i class="ti ti-device-floppy"></i> Сохранить тренировку
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB: HISTORY -->
+      <div id="tab-history" class="tab hidden">
+        <div class="section-title">История тренировок</div>
+        <div id="historyList"></div>
+      </div>
+
+      <!-- TAB: FRIENDS -->
+      <div id="tab-friends" class="tab hidden">
+        <div class="search-wrap">
+          <input type="text" id="friendSearch" placeholder="🔍 Поиск по нику..."
+            oninput="debounceFriendSearch(this.value)">
+        </div>
+        <div id="searchResults"></div>
+        <div id="friendRequests"></div>
+        <div class="section-title" id="friendsListTitle">Друзья</div>
+        <div id="friendsList"></div>
+      </div>
+
+      <!-- TAB: GROUPS (trainer only) -->
+      <div id="tab-groups" class="tab hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div class="section-title" style="margin:0">Мои группы</div>
+          <button class="btn-sm green" onclick="showCreateGroupModal()">
+            <i class="ti ti-plus"></i> Создать
+          </button>
+        </div>
+        <div id="groupsList"></div>
+      </div>
+
+      <!-- TAB: ADMIN -->
+      <div id="tab-admin" class="tab hidden">
+        <div class="section-title">Заявки тренеров</div>
+        <div id="approvalsList"></div>
+      </div>
+
+      <!-- TAB: PROFILE -->
+      <div id="tab-profile" class="tab hidden">
+        <div class="profile-header">
+          <div id="profileAvatar"></div>
+          <div id="profileNick" class="profile-nick"></div>
+          <div id="profileRole" class="profile-role"></div>
+        </div>
+        <div class="section-title">Статистика</div>
+        <div id="profileStats" class="stats-grid"></div>
+        <div class="section-title" style="margin-top:20px">Настройки</div>
+        <div class="settings-card">
+          <div class="setting-row">
+            <span>Цель по умолчанию</span>
+            <div class="goal-pills small" id="profileGoalPills">
+              <button class="gpill" id="pg7000" onclick="setDefaultGoal(7000)">7 000</button>
+              <button class="gpill" id="pg8000" onclick="setDefaultGoal(8000)">8 000</button>
+              <button class="gpill" id="pg9000" onclick="setDefaultGoal(9000)">9 000</button>
+              <button class="gpill" id="pg10000" onclick="setDefaultGoal(10000)">10 000</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn-danger" style="margin:32px auto;display:block;width:100%" onclick="signOut()">
+          <i class="ti ti-logout"></i> Выйти
+        </button>
+      </div>
+
+    </div><!-- /tab-content -->
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" id="nav-tracker" onclick="showTab('tracker')">
+        <i class="ti ti-bolt"></i><span>Трекер</span>
       </button>
-      <button class="reset-btn" onclick="resetAll()">
-        <i class="ti ti-refresh"></i> Сбросить всё
+      <button class="nav-btn" id="nav-history" onclick="showTab('history')">
+        <i class="ti ti-calendar-stats"></i><span>История</span>
       </button>
-    </div>
-  </div>
+      <button class="nav-btn" id="nav-friends" onclick="showTab('friends')">
+        <i class="ti ti-users"></i><span>Друзья</span>
+        <span class="nav-badge hidden" id="badge-friends">0</span>
+      </button>
+      <button class="nav-btn hidden" id="nav-groups" onclick="showTab('groups')">
+        <i class="ti ti-tournament"></i><span>Группы</span>
+      </button>
+      <button class="nav-btn hidden" id="nav-admin" onclick="showTab('admin')">
+        <i class="ti ti-shield"></i><span>Админ</span>
+      </button>
+      <button class="nav-btn" id="nav-profile" onclick="showTab('profile')">
+        <i class="ti ti-user"></i><span>Профиль</span>
+      </button>
+    </nav>
+  </div><!-- /screen-app -->
 
-  <!-- EXERCISES -->
-  <div class="section-title" style="margin-top:36px">Выберите активность</div>
+</div><!-- /app -->
 
-  <div id="exCards"></div>
-
-  <!-- REFERENCE TABLE -->
-  <div class="section-title">Справочник — сколько нужно для цели</div>
-
-  <div class="info-card">
-    <table class="info-table">
-      <thead>
-        <tr>
-          <th>Упражнение</th>
-          <th>Для 7 000 б</th>
-          <th>Для 10 000 б</th>
-          <th>б/мин</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>🚴 Велосипед</td>
-          <td>~42 мин</td>
-          <td>~60 мин</td>
-          <td><span class="pts-pill">167</span></td>
-        </tr>
-        <tr>
-          <td>🚶 Ходьба</td>
-          <td>~90 мин</td>
-          <td>~128 мин</td>
-          <td><span class="pts-pill">78</span></td>
-        </tr>
-        <tr>
-          <td>🌀 Эллипсоид</td>
-          <td>~45 мин</td>
-          <td>~64 мин</td>
-          <td><span class="pts-pill">156</span></td>
-        </tr>
-        <tr>
-          <td>🪜 Степпер</td>
-          <td>~49 мин</td>
-          <td>~70 мин</td>
-          <td><span class="pts-pill">144</span></td>
-        </tr>
-        <tr>
-          <td>💃 Танцы</td>
-          <td>~50 мин</td>
-          <td>~72 мин</td>
-          <td><span class="pts-pill">140</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- HOW IT WORKS -->
-  <div class="section-title">Как считается</div>
-
-  <div class="info-card">
-    <table class="info-table">
-      <thead>
-        <tr>
-          <th>Понятие</th>
-          <th>Значение</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>10 000 шагов</td>
-          <td>≈ 450 ккал (человек ~70–75 кг)</td>
-        </tr>
-        <tr>
-          <td>1 шаг = 1 балл</td>
-          <td>≈ 0.045 ккал</td>
-        </tr>
-        <tr>
-          <td>1 ккал</td>
-          <td>≈ 22 балла</td>
-        </tr>
-        <tr>
-          <td>Цель похудения</td>
-          <td>7 000–10 000 б/день (315–450 ккал)</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="footer">
-    Расчёт основан на среднем расходе ккал для человека 70–75 кг.<br>
-    Индивидуальные показатели зависят от веса, интенсивности и физической формы.
-  </div>
-
-</div>
+<!-- Supabase SDK — раскомментировать в Фазе 2 -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <script>
-const exercises = [
-  {
-    id: 'bike',
-    name: 'Велосипед',
-    desc: 'Умеренный темп, улица или велотренажёр',
-    meta: '~7.5 ккал/мин',
-    pts: 167,
-    icon: 'ti-bike',
-    iconClass: 'green-icon',
-    max: 75,
-    step: 5,
-    hints: [
-      { label: '20 мин', val: 20, pts: 3340 },
-      { label: '30 мин', val: 30, pts: 5010 },
-      { label: '42 мин', val: 40, pts: 6680 },
-      { label: '60 мин', val: 60, pts: 10020 },
-    ]
-  },
-  {
-    name: 'Ходьба',
-    desc: 'Обычный темп, улица или дорожка',
-    meta: '~3.5 ккал/мин',
-    pts: 78,
-    icon: 'ti-walk',
-    iconClass: 'green-icon',
-    max: 120,
-    step: 5,
-    hints: [
-      { label: '30 мин', val: 30, pts: 2340 },
-      { label: '60 мин', val: 60, pts: 4680 },
-      { label: '90 мин', val: 90, pts: 7020 },
-      { label: '2 часа', val: 120, pts: 9360 },
-    ]
-  },
-  {
-    id: 'ell',
-    name: 'Эллипсоид',
-    desc: 'Умеренная нагрузка, ровный темп',
-    meta: '~7 ккал/мин',
-    pts: 156,
-    icon: 'ti-ripple',
-    iconClass: 'green-icon',
-    max: 75,
-    step: 5,
-    hints: [
-      { label: '20 мин', val: 20, pts: 3120 },
-      { label: '30 мин', val: 30, pts: 4680 },
-      { label: '45 мин', val: 45, pts: 7020 },
-      { label: '60 мин', val: 60, pts: 9360 },
-    ]
-  },
-  {
-    id: 'step',
-    name: 'Степпер',
-    desc: 'Тренирует ягодицы, бёдра и икры',
-    meta: '~6.5 ккал/мин',
-    pts: 144,
-    icon: 'ti-stairs-up',
-    iconClass: 'green-icon',
-    max: 75,
-    step: 5,
-    hints: [
-      { label: '20 мин', val: 20, pts: 2880 },
-      { label: '30 мин', val: 30, pts: 4320 },
-      { label: '49 мин', val: 50, pts: 7200 },
-      { label: '60 мин', val: 60, pts: 8640 },
-    ]
-  },
-  {
-    id: 'dance',
-    name: 'Танцы (sexy dance)',
-    desc: '1 час = ~8 500 б — попадает в цель',
-    meta: '~6.3 ккал/мин',
-    pts: 140,
-    icon: 'ti-music',
-    iconClass: 'coral-icon',
-    max: 90,
-    step: 5,
-    hints: [
-      { label: '30 мин', val: 30, pts: 4200 },
-      { label: '50 мин', val: 50, pts: 7000 },
-      { label: '60 мин', val: 60, pts: 8400 },
-      { label: '72 мин', val: 72, pts: 10080 },
-    ]
-  },
-];
+'use strict';
 
+// ================================================================
+// CONFIG
+// ================================================================
+const SUPABASE_URL = 'https://zsazpltqcphcfivrqoyo.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_sWbGo4yWROeIaye_nl6AcA_Jle19J4n';
+const DICEBEAR_BASE = 'https://api.dicebear.com/7.x';
+const AVATAR_STYLES = ['adventurer', 'lorelei', 'micah', 'notionists', 'pixel-art'];
+const padPin = (pin) => pin + '@AT2'; // Supabase требует мин. 6 символов, пользователь вводит 4+
+const BASE_GOALS = [7000, 8000, 9000, 10000];
+const MILESTONES = [1, 3, 7, 14, 21, 28, 31];
+const MILESTONE_DATA = {
+  1:  { medal: '🌱', msg: 'Первый шаг сделан! Начало положено' },
+  3:  { medal: '🔥', msg: '3 дня подряд — привычка начинает формироваться!' },
+  7:  { medal: '⭐', msg: 'Целая неделя! Ты молодец, так держать' },
+  14: { medal: '💪', msg: 'Две недели — это уже характер' },
+  21: { medal: '🏅', msg: '21 день — учёные говорят, привычка сформирована!' },
+  28: { medal: '🏆', msg: '28 дней без остановки — ты машина' },
+  31: { medal: '👑', msg: 'Полный месяц! Абсолютный рекорд' },
+};
+
+// ================================================================
+// SUPABASE CLIENT
+// ================================================================
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ================================================================
+// STATE
+// ================================================================
+let currentUser    = null;   // { id, email }
+let currentProfile = null;   // { id, nickname, avatar_seed, avatar_animal, role, is_active, default_goal, ... }
+let selectedAvatarSeed  = null;
+let selectedAvatarStyle = 'adventurer';
+let selectedRole = 'user';
+let nickCheckOk  = false;
+let _nickTimer   = null;
+let _friendTimer = null;
+let currentTab   = 'tracker';
+
+// Tracker state
+const exercises = [
+  { id:'bike',  name:'Велосипед',           desc:'Умеренный темп, улица или велотренажёр', meta:'~7.5 ккал/мин', pts:167, icon:'ti-bike',       iconClass:'green-icon', max:75,  step:5,
+    hints:[{label:'20 мин',val:20,pts:3340},{label:'30 мин',val:30,pts:5010},{label:'42 мин',val:40,pts:6680},{label:'60 мин',val:60,pts:10020}] },
+  { id:'walk',  name:'Ходьба',              desc:'Обычный темп, улица или дорожка',          meta:'~3.5 ккал/мин', pts:78,  icon:'ti-walk',       iconClass:'green-icon', max:120, step:5,
+    hints:[{label:'30 мин',val:30,pts:2340},{label:'60 мин',val:60,pts:4680},{label:'90 мин',val:90,pts:7020},{label:'2 часа',val:120,pts:9360}] },
+  { id:'ell',   name:'Эллипсоид',           desc:'Умеренная нагрузка, ровный темп',          meta:'~7 ккал/мин',   pts:156, icon:'ti-ripple',     iconClass:'green-icon', max:75,  step:5,
+    hints:[{label:'20 мин',val:20,pts:3120},{label:'30 мин',val:30,pts:4680},{label:'45 мин',val:45,pts:7020},{label:'60 мин',val:60,pts:9360}] },
+  { id:'step',  name:'Степпер',             desc:'Тренирует ягодицы, бёдра и икры',          meta:'~6.5 ккал/мин', pts:144, icon:'ti-stairs-up',  iconClass:'green-icon', max:75,  step:5,
+    hints:[{label:'20 мин',val:20,pts:2880},{label:'30 мин',val:30,pts:4320},{label:'49 мин',val:50,pts:7200},{label:'60 мин',val:60,pts:8640}] },
+  { id:'dance', name:'Танцы (sexy dance)',  desc:'1 час = ~8 500 б — попадает в цель',       meta:'~6.3 ккал/мин', pts:140, icon:'ti-music',      iconClass:'coral-icon', max:90,  step:5,
+    hints:[{label:'30 мин',val:30,pts:4200},{label:'50 мин',val:50,pts:7000},{label:'60 мин',val:60,pts:8400},{label:'72 мин',val:72,pts:10080}] },
+];
 const vals = {};
 exercises.forEach(e => vals[e.id] = 0);
 let goal = 7000;
-let advancedMode = false;
 let currentBaseGoal = 7000;
-const BASE_GOALS = [7000, 8000, 9000, 10000];
+let advancedMode = false;
 
-function totalPts() {
-  return exercises.reduce((s, e) => s + vals[e.id] * e.pts, 0);
+// ================================================================
+// UTILS
+// ================================================================
+function uid() { return crypto.randomUUID(); }
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function yesterdayStr() { return new Date(Date.now() - 86400000).toISOString().split('T')[0]; }
+function avatarUrl(seed, style) {
+  return `${DICEBEAR_BASE}/${style || 'adventurer'}/svg?seed=${encodeURIComponent(seed)}&radius=50`;
+}
+function avatarImg(seed, style, size = 44) {
+  return `<img src="${avatarUrl(seed, style)}" width="${size}" height="${size}" alt="avatar">`;
+}
+function formatDate(d) {
+  const dt = new Date(d + 'T12:00:00');
+  return dt.toLocaleDateString('ru', { day: 'numeric', month: 'long', weekday: 'short' });
 }
 
-function updateUI() {
+// ================================================================
+// TOAST
+// ================================================================
+function showToast(msg, duration = 3000) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), duration);
+}
+
+// ================================================================
+// ROUTER
+// ================================================================
+function showScreen(id) {
+  ['screen-auth','screen-waiting','screen-app'].forEach(s => {
+    document.getElementById(s).classList.toggle('hidden', s !== id);
+  });
+}
+
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const tab = document.getElementById('tab-' + id);
+  const btn = document.getElementById('nav-' + id);
+  if (tab) tab.classList.add('active');
+  if (btn) btn.classList.add('active');
+  currentTab = id;
+  if (id === 'history')  loadHistory();
+  if (id === 'friends')  loadFriends();
+  if (id === 'groups')   loadGroups();
+  if (id === 'admin')    loadApprovals();
+  if (id === 'profile')  renderProfile();
+}
+
+// ================================================================
+// AUTH SCREEN LOGIC
+// ================================================================
+function switchAuthTab(which) {
+  document.getElementById('auth-register').classList.toggle('hidden', which !== 'register');
+  document.getElementById('auth-login').classList.toggle('hidden', which !== 'login');
+  document.getElementById('authTabReg').classList.toggle('active', which === 'register');
+  document.getElementById('authTabLogin').classList.toggle('active', which === 'login');
+}
+
+// ---- Avatar picker ----
+let _avatarSeeds = [];
+function buildAvatarGrid() {
+  _avatarSeeds = Array.from({length: 8}, () => Math.random().toString(36).slice(2, 10));
+  selectedAvatarStyle = AVATAR_STYLES[Math.floor(Math.random() * AVATAR_STYLES.length)];
+  const grid = document.getElementById('avatarGrid');
+  grid.innerHTML = '';
+  _avatarSeeds.forEach((seed, i) => {
+    const div = document.createElement('div');
+    div.className = 'avatar-option' + (i === 0 ? ' selected' : '');
+    div.innerHTML = `<img src="${avatarUrl(seed, selectedAvatarStyle)}" loading="lazy">`;
+    div.onclick = () => {
+      document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
+      div.classList.add('selected');
+      selectedAvatarSeed = seed;
+    };
+    if (i === 0) selectedAvatarSeed = seed;
+    grid.appendChild(div);
+  });
+}
+
+function shuffleAvatars() { buildAvatarGrid(); }
+
+// ---- Nick check ----
+function debounceNickCheck(val) {
+  clearTimeout(_nickTimer);
+  const el = document.getElementById('nickStatus');
+  if (!val) { el.textContent = ''; nickCheckOk = false; return; }
+  el.textContent = '…';
+  _nickTimer = setTimeout(() => checkNick(val), 500);
+}
+
+async function checkNick(nick) {
+  const el = document.getElementById('nickStatus');
+  if (!/^[a-zA-Zа-яА-ЯёЁ0-9_]{2,20}$/.test(nick)) {
+    el.textContent = '❌'; nickCheckOk = false; return;
+  }
+  const { data } = await sb.from('profiles').select('id').eq('nickname', nick).single();
+  if (data) { el.textContent = '❌'; nickCheckOk = false; }
+  else      { el.textContent = '✅'; nickCheckOk = true;  }
+}
+
+// ---- Step navigation ----
+function goRegStep(step) {
+  if (step === 2) {
+    if (!selectedAvatarSeed) { showToast('Выберите аватарку'); return; }
+  }
+  if (step === 3) {
+    const nick = document.getElementById('reg-nick').value.trim();
+    const pin  = document.getElementById('reg-pin').value;
+    const pin2 = document.getElementById('reg-pin2').value;
+    const err  = document.getElementById('reg-step2-error');
+    err.classList.add('hidden');
+    if (!nickCheckOk) { err.textContent = 'Проверьте ник — он должен быть свободен'; err.classList.remove('hidden'); return; }
+    if (pin.length < 4) { err.textContent = 'PIN должен быть минимум 4 цифры'; err.classList.remove('hidden'); return; }
+    if (pin !== pin2)   { err.textContent = 'PIN не совпадает'; err.classList.remove('hidden'); return; }
+  }
+  document.querySelectorAll('.auth-step').forEach(s => s.classList.add('hidden'));
+  document.getElementById('reg-step-' + step).classList.remove('hidden');
+}
+
+function selectRole(role) {
+  selectedRole = role;
+  document.getElementById('role-card-user').classList.toggle('active', role === 'user');
+  document.getElementById('role-card-trainer').classList.toggle('active', role === 'trainer');
+}
+
+// ---- Register ----
+async function register() {
+  const nick = document.getElementById('reg-nick').value.trim();
+  const pin  = document.getElementById('reg-pin').value;
+  const err  = document.getElementById('reg-step3-error');
+  err.classList.add('hidden');
+  const btn  = document.getElementById('btn-create');
+  btn.disabled = true; btn.textContent = 'Создаём…';
+
+  const email = `${nick}@activitytracker.local`;
+  const { data, error } = await sb.auth.signUp({ email, password: padPin(pin) });
+  if (error) {
+    err.textContent = error.message; err.classList.remove('hidden');
+    btn.disabled = false; btn.textContent = 'Создать аккаунт'; return;
+  }
+
+  const isTrainer = selectedRole === 'trainer';
+  const profile = {
+    id:             data.user.id,
+    nickname:       nick,
+    avatar_seed:    selectedAvatarSeed,
+    avatar_style:   selectedAvatarStyle,
+    role:           isTrainer ? 'trainer' : 'user',
+    is_active:      !isTrainer,
+    trainer_status: isTrainer ? 'pending' : null,
+    default_goal:   7000,
+    created_at:     new Date().toISOString(),
+  };
+  await sb.from('profiles').insert(profile);
+
+  if (isTrainer) {
+    await sb.from('trainer_approvals').insert({
+      id: uid(), trainer_id: data.user.id, reviewed_by: null,
+      status: 'pending', admin_note: '', created_at: new Date().toISOString(),
+    });
+  }
+
+  currentUser    = data.user;
+  currentProfile = profile;
+  afterLogin();
+}
+
+// ---- Login ----
+async function login() {
+  const nick = document.getElementById('login-nick').value.trim();
+  const pin  = document.getElementById('login-pin').value;
+  const err  = document.getElementById('login-error');
+  err.classList.add('hidden');
+
+  const email = `${nick}@activitytracker.local`;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: padPin(pin) });
+  if (error) { err.textContent = error.message; err.classList.remove('hidden'); return; }
+
+  currentUser = data.user;
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  currentProfile = profile;
+  afterLogin();
+}
+
+// ---- Sign out ----
+async function signOut() {
+  await sb.auth.signOut();
+  currentUser = currentProfile = null;
+  // Reset tracker
+  exercises.forEach(e => vals[e.id] = 0);
+  advancedMode = false; document.body.classList.remove('advanced');
+  goal = 7000; currentBaseGoal = 7000;
+  showScreen('screen-auth');
+  switchAuthTab('register');
+  buildAvatarGrid();
+  goRegStep(1);
+  nickCheckOk = false; selectedRole = 'user';
+  selectRole('user');
+}
+
+// ---- After login routing ----
+async function afterLogin() {
+  if (!currentProfile) {
+    const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+    currentProfile = data;
+  }
+  if (!currentProfile) { showScreen('screen-auth'); return; } // no profile yet
+
+  if (!currentProfile.is_active && currentProfile.role === 'trainer') {
+    renderWaiting();
+    showScreen('screen-waiting');
+    return;
+  }
+
+  // Setup app
+  applyProfile();
+  buildExCards();
+  await loadTodayWorkout();
+  renderStreakWidget();
+  showScreen('screen-app');
+  showTab('tracker');
+}
+
+// ================================================================
+// PROFILE SETUP
+// ================================================================
+function applyProfile() {
+  const p = currentProfile;
+  // Header avatar
+  const ha = document.getElementById('headerAvatar');
+  ha.innerHTML = avatarImg(p.avatar_seed, p.avatar_style, 36);
+
+  // Default goal
+  const dg = p.default_goal || 7000;
+  currentBaseGoal = dg;
+  goal = dg * (advancedMode ? 3 : 1);
+  BASE_GOALS.forEach(v => {
+    const el = document.getElementById('g' + v);
+    if (el) el.classList.toggle('on', v === dg);
+  });
+  document.getElementById('goalLabel').textContent = goal.toLocaleString('ru');
+
+  // Role-based nav
+  const isTrainer = p.role === 'trainer' && p.is_active;
+  const isAdmin   = p.role === 'admin';
+  document.getElementById('nav-groups').classList.toggle('hidden', !isTrainer);
+  document.getElementById('nav-admin').classList.toggle('hidden', !isAdmin);
+}
+
+function renderWaiting() {
+  const p = currentProfile;
+  document.getElementById('waitingAvatar').innerHTML =
+    `<img src="${avatarUrl(p.avatar_seed, p.avatar_style)}" style="width:80px;height:80px;border-radius:50%;margin:0 auto 16px;display:block">`;
+}
+
+// ================================================================
+// TRACKER
+// ================================================================
+function buildExCards() {
+  const container = document.getElementById('exCards');
+  if (container.children.length) return; // already built
+  exercises.forEach(e => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    card.id = 'card-' + e.id;
+    card.innerHTML = `
+      <div class="ex-head">
+        <div class="ex-icon-wrap ${e.iconClass}"><i class="ti ${e.icon}"></i></div>
+        <div class="ex-info">
+          <div class="ex-name">${e.name}</div>
+          <div class="ex-desc">${e.desc}</div>
+        </div>
+        <div class="ex-rate" id="rate-${e.id}">${e.meta}</div>
+      </div>
+      <div class="slider-wrap">
+        <span class="slider-label">0</span>
+        <input type="range" id="sl-${e.id}" min="0" max="${e.max}" step="${e.step}" value="0"
+          oninput="vals['${e.id}']=+this.value; updateTrackerUI()" aria-label="${e.name}">
+        <span class="slider-label">${e.max}</span>
+        <span class="slider-readout" id="ro-${e.id}">0 мин</span>
+      </div>
+      <div class="hints">
+        ${e.hints.map(h => `
+          <div class="hint" onclick="setVal('${e.id}',${h.val})">
+            <b>${h.label}</b>${h.pts.toLocaleString('ru')} б
+          </div>`).join('')}
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function totalPts() { return exercises.reduce((s, e) => s + vals[e.id] * e.pts, 0); }
+
+function updateTrackerUI() {
   const t = totalPts();
   const pct = Math.min(100, (t / goal) * 100);
   document.getElementById('totalPts').textContent = t.toLocaleString('ru');
@@ -681,23 +1056,20 @@ function updateUI() {
 
   const msgEl = document.getElementById('statusMsg');
   let msg = '';
-  if (t === 0)           msg = 'Передвиньте ползунок нужного упражнения';
-  else if (t < goal*0.3) msg = 'Хорошее начало — продолжайте!';
-  else if (t < goal*0.65)msg = 'Больше половины пути!';
-  else if (t < goal)     msg = 'Финальный рывок — вы почти у цели!';
-  else                   msg = '🏆 Цель достигнута! Отличная работа!';
+  if (t === 0)            msg = 'Передвиньте ползунок нужного упражнения';
+  else if (t < goal*.3)   msg = 'Хорошее начало — продолжайте!';
+  else if (t < goal*.65)  msg = 'Больше половины пути!';
+  else if (t < goal)      msg = 'Финальный рывок — вы почти у цели!';
+  else                    msg = '🏆 Цель достигнута! Отличная работа!';
   msgEl.textContent = msg;
   msgEl.className = 'status-msg' + (t >= goal ? ' done' : '');
 
   exercises.forEach(e => {
     const earned = vals[e.id] * e.pts;
-    const rateEl = document.getElementById('rate-' + e.id);
-    const card = document.getElementById('card-' + e.id);
-    const ro = document.getElementById('ro-' + e.id);
-    rateEl.textContent = earned > 0 ? '+' + earned.toLocaleString('ru') + ' б' : e.meta;
-    rateEl.className = 'ex-rate' + (earned > 0 ? ' pos' : '');
-    card.className = 'ex-card' + (vals[e.id] > 0 ? ' active' : '');
-    ro.textContent = vals[e.id] + ' мин';
+    document.getElementById('rate-' + e.id).textContent = earned > 0 ? '+' + earned.toLocaleString('ru') + ' б' : e.meta;
+    document.getElementById('rate-' + e.id).className = 'ex-rate' + (earned > 0 ? ' pos' : '');
+    document.getElementById('card-' + e.id).className = 'ex-card' + (vals[e.id] > 0 ? ' active' : '');
+    document.getElementById('ro-' + e.id).textContent = vals[e.id] + ' мин';
   });
 }
 
@@ -706,9 +1078,10 @@ function setGoal(baseG) {
   goal = baseG * (advancedMode ? 3 : 1);
   document.getElementById('goalLabel').textContent = goal.toLocaleString('ru');
   BASE_GOALS.forEach(v => {
-    document.getElementById('g' + v).className = 'gpill' + (baseG === v ? ' on' : '');
+    document.getElementById('g' + v).className = 'gpill' + (v === baseG ? ' on' : '');
+    document.getElementById('g' + v).textContent = (v * (advancedMode ? 3 : 1)).toLocaleString('ru');
   });
-  updateUI();
+  updateTrackerUI();
 }
 
 function toggleAdvanced() {
@@ -719,63 +1092,555 @@ function toggleAdvanced() {
   btn.innerHTML = advancedMode
     ? '<i class="ti ti-flame"></i> Продвинутый ✓'
     : '<i class="ti ti-flame"></i> Продвинутый уровень';
-  BASE_GOALS.forEach(v => {
-    document.getElementById('g' + v).textContent = (v * (advancedMode ? 3 : 1)).toLocaleString('ru');
-  });
   setGoal(currentBaseGoal);
 }
 
 function setVal(id, v) {
   vals[id] = v;
   document.getElementById('sl-' + id).value = v;
-  updateUI();
+  updateTrackerUI();
 }
 
 function resetAll() {
-  exercises.forEach(e => {
-    vals[e.id] = 0;
-    document.getElementById('sl-' + e.id).value = 0;
-  });
-  updateUI();
+  exercises.forEach(e => { vals[e.id] = 0; const sl = document.getElementById('sl-' + e.id); if(sl) sl.value = 0; });
+  updateTrackerUI();
 }
 
-function buildCards() {
-  const container = document.getElementById('exCards');
+// ---- Load today's workout to pre-fill sliders ----
+async function loadTodayWorkout() {
+  if (!currentUser) return;
+  const today = todayStr();
+  const { data } = await sb.from('workouts').select('*')
+    .eq('user_id', currentUser.id).eq('date', today).single();
+  if (!data) {
+    document.getElementById('saveStatus').textContent = '';
+    return;
+  }
+  // Pre-fill sliders
+  const ex = data.exercises || {};
   exercises.forEach(e => {
-    const card = document.createElement('div');
-    card.className = 'ex-card';
-    card.id = 'card-' + e.id;
-    card.innerHTML = `
-      <div class="ex-head">
-        <div class="ex-icon-wrap ${e.iconClass}">
-          <i class="ti ${e.icon}"></i>
+    const v = ex[e.id] || 0;
+    vals[e.id] = v;
+    const sl = document.getElementById('sl-' + e.id);
+    if (sl) sl.value = v;
+  });
+  // Restore goal from saved workout
+  if (data.goal) {
+    const base = advancedMode ? data.goal / 3 : data.goal;
+    currentBaseGoal = base;
+    goal = data.goal;
+  }
+  document.getElementById('saveStatus').textContent = '✅ Тренировка уже сохранена сегодня — можно изменить';
+  updateTrackerUI();
+}
+
+// ---- Save workout ----
+async function saveWorkout() {
+  if (!currentUser) return;
+  const btn = document.getElementById('btnSave');
+  btn.disabled = true;
+  const t      = totalPts();
+  const today  = todayStr();
+  const exData = {};
+  exercises.forEach(e => { if (vals[e.id] > 0) exData[e.id] = vals[e.id]; });
+
+  const workout = {
+    id:            uid(),
+    user_id:       currentUser.id,
+    date:          today,
+    exercises:     exData,
+    total_points:  t,
+    goal:          goal,
+    goal_achieved: t >= goal,
+    created_at:    new Date().toISOString(),
+  };
+
+  await sb.from('workouts').upsert(workout, { onConflict: 'user_id,date' });
+
+  if (workout.goal_achieved) await updateStreak(currentUser.id);
+  await renderStreakWidget();
+
+  document.getElementById('saveStatus').textContent = '✅ Тренировка сохранена!';
+  showToast('Тренировка сохранена 💪');
+  btn.disabled = false;
+}
+
+// ================================================================
+// STREAK
+// ================================================================
+async function updateStreak(userId) {
+  const today     = todayStr();
+  const yesterday = yesterdayStr();
+  const { data: streak } = await sb.from('streaks').select('*').eq('user_id', userId).single();
+
+  if (streak?.last_goal_date === today) return; // already counted today
+
+  let newCurrent = 1;
+  if (streak?.last_goal_date === yesterday) {
+    newCurrent = (streak.current_streak || 0) + 1;
+  }
+
+  const newLongest = Math.max(newCurrent, streak?.longest_streak || 0);
+  await sb.from('streaks').upsert({
+    user_id:        userId,
+    current_streak: newCurrent,
+    longest_streak: newLongest,
+    last_goal_date: today,
+    updated_at:     new Date().toISOString(),
+  });
+
+  checkMilestone(newCurrent);
+}
+
+function checkMilestone(n) {
+  const monthEnd = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+  const ms = n === monthEnd ? monthEnd : MILESTONES.includes(n) ? n : null;
+  if (ms && MILESTONE_DATA[ms]) {
+    const { medal, msg } = MILESTONE_DATA[ms] || MILESTONE_DATA[31];
+    showToast(`${medal} ${msg}`, 5000);
+  }
+}
+
+async function renderStreakWidget() {
+  const widget = document.getElementById('streakWidget');
+  if (!currentUser || !widget) return;
+  const { data: streak } = await sb.from('streaks').select('*').eq('user_id', currentUser.id).single();
+  const cur = streak?.current_streak || 0;
+  const rec = streak?.longest_streak || 0;
+  const maxMs = 31;
+  const pct = Math.min(100, (cur / maxMs) * 100);
+
+  widget.innerHTML = `
+    <div class="streak-top">
+      <span class="streak-main">🔥 ${cur} ${pluralDays(cur)}</span>
+      <span class="streak-record">Рекорд: ${rec} дн.</span>
+    </div>
+    <div class="streak-bar-wrap">
+      <div class="streak-bar-fill" style="width:${pct}%"></div>
+    </div>
+    <div class="streak-milestones">
+      ${MILESTONES.map(m => `
+        <div class="streak-ms ${cur >= m ? 'reached' : ''}">
+          <div class="streak-ms-dot"></div>
+          <span>${m}</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+function pluralDays(n) {
+  const mod10 = n % 10, mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return 'день';
+  if ([2,3,4].includes(mod10) && ![12,13,14].includes(mod100)) return 'дня';
+  return 'дней';
+}
+
+// ================================================================
+// HISTORY
+// ================================================================
+async function loadHistory() {
+  if (!currentUser) return;
+  const { data: workouts } = await sb.from('workouts').select('*')
+    .eq('user_id', currentUser.id).order('date', { ascending: false });
+
+  const container = document.getElementById('historyList');
+  if (!workouts || !workouts.length) {
+    container.innerHTML = `<div class="empty-state"><i class="ti ti-calendar-off"></i><p>Тренировок пока нет<br>Сохраните первую!</p></div>`;
+    return;
+  }
+  const exMap = Object.fromEntries(exercises.map(e => [e.id, e.name]));
+  container.innerHTML = workouts.map(w => {
+    const exTags = Object.entries(w.exercises || {})
+      .filter(([,v]) => v > 0)
+      .map(([k, v]) => `<span class="history-ex-tag">${exMap[k] || k} ${v} мин</span>`)
+      .join('');
+    return `
+      <div class="history-card">
+        <div class="history-head">
+          <span class="history-date">${formatDate(w.date)}</span>
+          <span class="history-pts">${(w.total_points || 0).toLocaleString('ru')} б</span>
         </div>
-        <div class="ex-info">
-          <div class="ex-name">${e.name}</div>
-          <div class="ex-desc">${e.desc}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span class="history-goal-badge ${w.goal_achieved ? 'achieved' : 'not-achieved'}">
+            ${w.goal_achieved ? '✅ Цель' : '❌ Цель не выполнена'}
+          </span>
+          <span style="font-size:12px;color:var(--text3)">из ${(w.goal||0).toLocaleString('ru')} б</span>
         </div>
-        <div class="ex-rate" id="rate-${e.id}">${e.meta}</div>
+        ${exTags ? `<div class="history-exercises">${exTags}</div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+// ================================================================
+// FRIENDS
+// ================================================================
+let _friendSearchTimer = null;
+function debounceFriendSearch(val) {
+  clearTimeout(_friendSearchTimer);
+  if (!val.trim()) { document.getElementById('searchResults').innerHTML = ''; return; }
+  _friendSearchTimer = setTimeout(() => searchUsers(val), 400);
+}
+
+async function searchUsers(query) {
+  if (!currentUser) return;
+  const { data: results } = await sb.from('profiles').select('*')
+    .ilike('nickname', `%${query}%`).neq('id', currentUser.id).limit(10);
+  const container = document.getElementById('searchResults');
+  if (!results || !results.length) {
+    container.innerHTML = '<div style="font-size:13px;color:var(--text3);text-align:center;padding:12px">Никого не найдено</div>';
+    return;
+  }
+
+  // Get current friendship statuses
+  const { data: myFriendships } = await sb.from('friendships').select('*')
+    .eq('requester_id', currentUser.id);
+  const { data: incomingFs } = await sb.from('friendships').select('*')
+    .eq('addressee_id', currentUser.id);
+  const allFs = [...(myFriendships || []), ...(incomingFs || [])];
+
+  container.innerHTML = results.map(u => {
+    const fs = allFs.find(f =>
+      (f.requester_id === currentUser.id && f.addressee_id === u.id) ||
+      (f.addressee_id === currentUser.id && f.requester_id === u.id)
+    );
+    let actionBtn = '';
+    if (!fs) {
+      actionBtn = `<button class="btn-sm green" onclick="sendFriendRequest('${u.id}')">Добавить</button>`;
+    } else if (fs.status === 'pending' && fs.requester_id === currentUser.id) {
+      actionBtn = `<button class="btn-sm outline" disabled>Запрос отправлен</button>`;
+    } else if (fs.status === 'pending' && fs.addressee_id === currentUser.id) {
+      actionBtn = `<button class="btn-sm green" onclick="acceptFriend('${fs.id}')">Принять</button>`;
+    } else if (fs.status === 'accepted') {
+      actionBtn = `<button class="btn-sm outline" disabled>Уже друзья</button>`;
+    }
+    const roleLabel = u.role === 'trainer' && u.is_active ? ' 🏋️' : '';
+    return `
+      <div class="user-card">
+        <div class="user-card-avatar">${avatarImg(u.avatar_seed, u.avatar_style)}</div>
+        <div class="user-card-info">
+          <div class="user-card-nick">${u.nickname}${roleLabel}</div>
+        </div>
+        ${actionBtn}
+      </div>`;
+  }).join('');
+}
+
+async function sendFriendRequest(addresseeId) {
+  if (!currentUser) return;
+  await sb.from('friendships').insert({
+    id: uid(), requester_id: currentUser.id, addressee_id: addresseeId,
+    status: 'pending', created_at: new Date().toISOString(),
+  });
+  showToast('Запрос отправлен!');
+  const q = document.getElementById('friendSearch').value;
+  if (q) searchUsers(q);
+}
+
+async function acceptFriend(friendshipId) {
+  await sb.from('friendships').update({ status: 'accepted' }).eq('id', friendshipId);
+  showToast('Теперь вы друзья! 🤝');
+  loadFriends();
+}
+
+async function declineFriend(friendshipId) {
+  await sb.from('friendships').update({ status: 'declined' }).eq('id', friendshipId);
+  loadFriends();
+}
+
+async function loadFriends() {
+  if (!currentUser) return;
+
+  // Incoming pending requests
+  const { data: incoming } = await sb.from('friendships').select('*')
+    .eq('addressee_id', currentUser.id).eq('status', 'pending');
+  const reqContainer = document.getElementById('friendRequests');
+  const badge = document.getElementById('badge-friends');
+
+  if (incoming && incoming.length) {
+    badge.textContent = incoming.length;
+    badge.classList.remove('hidden');
+    // Load requester profiles
+    const ids = incoming.map(f => f.requester_id);
+    const { data: requesters } = await sb.from('profiles').select('*').in('id', ids);
+    const pMap = Object.fromEntries((requesters || []).map(p => [p.id, p]));
+    reqContainer.innerHTML = `
+      <div class="section-title">Входящие запросы (${incoming.length})</div>
+      ${incoming.map(f => {
+        const u = pMap[f.requester_id] || {};
+        return `
+          <div class="user-card">
+            <div class="user-card-avatar">${avatarImg(u.avatar_seed, u.avatar_style)}</div>
+            <div class="user-card-info"><div class="user-card-nick">${u.nickname || '?'}</div></div>
+            <div style="display:flex;gap:6px">
+              <button class="btn-sm green" onclick="acceptFriend('${f.id}')">✓</button>
+              <button class="btn-sm red" onclick="declineFriend('${f.id}')">✕</button>
+            </div>
+          </div>`;
+      }).join('')}`;
+  } else {
+    badge.classList.add('hidden');
+    reqContainer.innerHTML = '';
+  }
+
+  // Accepted friends
+  const { data: fs1 } = await sb.from('friendships').select('*')
+    .eq('requester_id', currentUser.id).eq('status', 'accepted');
+  const { data: fs2 } = await sb.from('friendships').select('*')
+    .eq('addressee_id', currentUser.id).eq('status', 'accepted');
+  const allAccepted = [...(fs1 || []), ...(fs2 || [])];
+  const friendIds = allAccepted.map(f =>
+    f.requester_id === currentUser.id ? f.addressee_id : f.requester_id
+  );
+
+  const container = document.getElementById('friendsList');
+  if (!friendIds.length) {
+    container.innerHTML = `<div class="empty-state"><i class="ti ti-user-off"></i><p>Друзей пока нет<br>Найдите их через поиск выше</p></div>`;
+    return;
+  }
+
+  const { data: friendProfiles } = await sb.from('profiles').select('*').in('id', friendIds);
+  const today = todayStr();
+  // Load today's workouts for friends
+  const friendWorkouts = {};
+  for (const fp of (friendProfiles || [])) {
+    const { data: fw } = await sb.from('workouts').select('*')
+      .eq('user_id', fp.id).eq('date', today).single();
+    if (fw) friendWorkouts[fp.id] = fw;
+  }
+  const { data: friendStreaks } = await sb.from('streaks').select('*').in('user_id', friendIds);
+  const streakMap = Object.fromEntries((friendStreaks || []).map(s => [s.user_id, s]));
+
+  // Sort: goal done first
+  const sorted = (friendProfiles || []).sort((a, b) => {
+    const aw = friendWorkouts[a.id], bw = friendWorkouts[b.id];
+    if (aw?.goal_achieved && !bw?.goal_achieved) return -1;
+    if (!aw?.goal_achieved && bw?.goal_achieved) return 1;
+    if (aw && !bw) return -1; if (!aw && bw) return 1;
+    return 0;
+  });
+
+  container.innerHTML = sorted.map(fp => {
+    const fw = friendWorkouts[fp.id];
+    const streak = streakMap[fp.id];
+    const pts   = fw?.total_points || 0;
+    const fgoal = fw?.goal || 7000;
+    const pct   = fw ? Math.min(100, (pts / fgoal) * 100) : 0;
+    const done  = fw?.goal_achieved;
+    return `
+      <div class="friend-card ${done ? 'goal-done' : ''}">
+        <div class="friend-head">
+          <div class="user-card-avatar">${avatarImg(fp.avatar_seed, fp.avatar_style)}</div>
+          <div style="flex:1">
+            <div class="user-card-nick">${fp.nickname}</div>
+            <div class="friend-streak">🔥 ${streak?.current_streak || 0} дн. подряд</div>
+          </div>
+          <div class="friend-pts">${fw ? pts.toLocaleString('ru') + ' б' : '—'}</div>
+          ${done ? '<span style="font-size:18px">✅</span>' : ''}
+        </div>
+        ${fw ? `
+          <div class="friend-bar-wrap"><div class="friend-bar-fill" style="width:${pct}%"></div></div>
+          <div style="font-size:11px;color:var(--text3)">${pts.toLocaleString('ru')} из ${fgoal.toLocaleString('ru')} б</div>
+        ` : '<div style="font-size:13px;color:var(--text3)">Ещё не тренировался сегодня</div>'}
+      </div>`;
+  }).join('');
+}
+
+// ================================================================
+// TRAINER PANEL
+// ================================================================
+async function loadGroups() {
+  if (!currentUser) return;
+  const { data: groups } = await sb.from('groups').select('*').eq('trainer_id', currentUser.id);
+  const container = document.getElementById('groupsList');
+  if (!groups || !groups.length) {
+    container.innerHTML = `<div class="empty-state"><i class="ti ti-users-group"></i><p>Групп пока нет<br>Создайте первую!</p></div>`;
+    return;
+  }
+  const groupMemberCounts = {};
+  for (const g of groups) {
+    const { data: members } = await sb.from('group_members').select('id')
+      .eq('group_id', g.id).eq('status', 'accepted');
+    groupMemberCounts[g.id] = members?.length || 0;
+  }
+  container.innerHTML = groups.map(g => `
+    <div class="group-card">
+      <div class="group-name">${g.name}</div>
+      <div class="group-meta">${groupMemberCounts[g.id]} участников · ${g.description || ''}</div>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="btn-sm outline" onclick="openGroupDashboard('${g.id}')">Дашборд</button>
+        <button class="btn-sm green" onclick="showInviteModal('${g.id}')">Пригласить</button>
       </div>
-      <div class="slider-wrap">
-        <span class="slider-label">0</span>
-        <input type="range" id="sl-${e.id}" min="0" max="${e.max}" step="${e.step}" value="0"
-          oninput="vals['${e.id}']=+this.value; updateUI()" aria-label="Минуты для ${e.name}">
-        <span class="slider-label">${e.max}</span>
-        <span class="slider-readout" id="ro-${e.id}">0 мин</span>
-      </div>
-      <div class="hints">
-        ${e.hints.map(h => `
-          <div class="hint" onclick="setVal('${e.id}', ${h.val})">
-            <b>${h.label}</b>${h.pts.toLocaleString('ru')} б
-          </div>`).join('')}
-      </div>
-    `;
-    container.appendChild(card);
+    </div>`).join('');
+}
+
+function showCreateGroupModal() {
+  const name = prompt('Название группы:');
+  if (!name) return;
+  const desc = prompt('Описание (необязательно):') || '';
+  createGroup(name.trim(), desc.trim());
+}
+
+async function createGroup(name, desc) {
+  if (!name) return;
+  await sb.from('groups').insert({
+    id: uid(), trainer_id: currentUser.id,
+    name, description: desc, created_at: new Date().toISOString(),
+  });
+  showToast('Группа создана!');
+  loadGroups();
+}
+
+async function showInviteModal(groupId) {
+  const nick = prompt('Ник пользователя для приглашения:');
+  if (!nick) return;
+  const { data: profile } = await sb.from('profiles').select('*').eq('nickname', nick.trim()).single();
+  if (!profile) { showToast('Пользователь не найден'); return; }
+  await sb.from('group_members').insert({
+    id: uid(), group_id: groupId, user_id: profile.id,
+    status: 'invited', joined_at: new Date().toISOString(),
+  });
+  showToast(`${nick} приглашён в группу!`);
+}
+
+async function openGroupDashboard(groupId) {
+  const { data: group } = await sb.from('groups').select('*').eq('id', groupId).single();
+  const { data: members } = await sb.from('group_members').select('*')
+    .eq('group_id', groupId).eq('status', 'accepted');
+  if (!members?.length) { showToast('В группе пока нет участников'); return; }
+  const ids = members.map(m => m.user_id);
+  const { data: profiles } = await sb.from('profiles').select('*').in('id', ids);
+  const today = todayStr();
+  let html = `<b>${group?.name || 'Группа'}</b><br><br>`;
+  for (const p of (profiles || [])) {
+    const { data: fw } = await sb.from('workouts').select('*').eq('user_id', p.id).eq('date', today).single();
+    const { data: streak } = await sb.from('streaks').select('*').eq('user_id', p.id).single();
+    const pts = fw?.total_points || 0;
+    const done = fw?.goal_achieved;
+    html += `${done ? '✅' : '⬜'} ${p.nickname}: ${pts.toLocaleString('ru')} б | 🔥${streak?.current_streak || 0}\n`;
+  }
+  alert(html);
+}
+
+// ================================================================
+// ADMIN PANEL
+// ================================================================
+async function loadApprovals() {
+  if (!currentUser) return;
+  const { data: approvals } = await sb.from('trainer_approvals').select('*').eq('status', 'pending');
+  const container = document.getElementById('approvalsList');
+  if (!approvals || !approvals.length) {
+    container.innerHTML = `<div class="empty-state"><i class="ti ti-check"></i><p>Нет заявок на рассмотрении</p></div>`;
+    return;
+  }
+  const ids = approvals.map(a => a.trainer_id);
+  const { data: trainers } = await sb.from('profiles').select('*').in('id', ids);
+  const tMap = Object.fromEntries((trainers || []).map(t => [t.id, t]));
+  container.innerHTML = approvals.map(a => {
+    const t = tMap[a.trainer_id] || {};
+    return `
+      <div class="approval-card">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="user-card-avatar">${avatarImg(t.avatar_seed, t.avatar_style)}</div>
+          <div>
+            <div class="user-card-nick">${t.nickname || '?'}</div>
+            <div style="font-size:12px;color:var(--text3)">Заявка от ${new Date(a.created_at).toLocaleDateString('ru')}</div>
+          </div>
+        </div>
+        <div class="approval-actions">
+          <button class="btn-sm green" onclick="approveTrainer('${a.id}','${a.trainer_id}')">✓ Подтвердить</button>
+          <button class="btn-sm red" onclick="rejectTrainer('${a.id}','${a.trainer_id}')">✕ Отклонить</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function approveTrainer(approvalId, trainerId) {
+  await sb.from('profiles').update({ is_active: true, trainer_status: 'approved' }).eq('id', trainerId);
+  await sb.from('trainer_approvals').update({
+    status: 'approved', reviewed_by: currentUser.id,
+  }).eq('id', approvalId);
+  showToast('Тренер подтверждён!');
+  loadApprovals();
+}
+
+async function rejectTrainer(approvalId, trainerId) {
+  const note = prompt('Причина отказа (необязательно):') || '';
+  await sb.from('profiles').update({ trainer_status: 'rejected' }).eq('id', trainerId);
+  await sb.from('trainer_approvals').update({
+    status: 'rejected', reviewed_by: currentUser.id, admin_note: note,
+  }).eq('id', approvalId);
+  showToast('Заявка отклонена');
+  loadApprovals();
+}
+
+// ================================================================
+// PROFILE
+// ================================================================
+async function renderProfile() {
+  if (!currentProfile) return;
+  const p = currentProfile;
+
+  document.getElementById('profileAvatar').innerHTML =
+    `<img src="${avatarUrl(p.avatar_seed, p.avatar_style)}" class="avatar-img" style="width:80px;height:80px;border-radius:50%;margin:0 auto 12px;display:block">`;
+  document.getElementById('profileNick').textContent = p.nickname;
+  document.getElementById('profileRole').textContent =
+    p.role === 'admin' ? '🛡️ Администратор' :
+    p.role === 'trainer' ? '🏋️ Тренер' : '👤 Пользователь';
+
+  // Stats
+  const { data: workouts } = await sb.from('workouts').select('*').eq('user_id', currentUser.id);
+  const { data: streak }   = await sb.from('streaks').select('*').eq('user_id', currentUser.id).single();
+  const total   = workouts?.length || 0;
+  const goals   = workouts?.filter(w => w.goal_achieved).length || 0;
+  const bestStr = streak?.longest_streak || 0;
+  const exCounts = {};
+  (workouts || []).forEach(w => {
+    Object.entries(w.exercises || {}).forEach(([k, v]) => { exCounts[k] = (exCounts[k] || 0) + v; });
+  });
+  const favEx = Object.entries(exCounts).sort((a, b) => b[1] - a[1])[0];
+  const favName = favEx ? (exercises.find(e => e.id === favEx[0])?.name || favEx[0]) : '—';
+
+  document.getElementById('profileStats').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Тренировок</div></div>
+    <div class="stat-card"><div class="stat-num">${goals}</div><div class="stat-label">Целей</div></div>
+    <div class="stat-card"><div class="stat-num">${bestStr}</div><div class="stat-label">Лучший стрик</div></div>`;
+
+  // Default goal pills
+  const dg = p.default_goal || 7000;
+  BASE_GOALS.forEach(v => {
+    const el = document.getElementById('pg' + v);
+    if (el) el.classList.toggle('on', v === dg);
   });
 }
 
-buildCards();
-updateUI();
+async function setDefaultGoal(val) {
+  if (!currentProfile) return;
+  currentProfile.default_goal = val;
+  await sb.from('profiles').update({ default_goal: val }).eq('id', currentProfile.id);
+  BASE_GOALS.forEach(v => {
+    const el = document.getElementById('pg' + v);
+    if (el) el.classList.toggle('on', v === val);
+  });
+  showToast(`Цель по умолчанию: ${val.toLocaleString('ru')} б`);
+}
+
+// ================================================================
+// INIT
+// ================================================================
+async function init() {
+  buildAvatarGrid();
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { showScreen('screen-auth'); return; }
+
+  currentUser = session.user;
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  currentProfile = profile;
+
+  if (!currentProfile) { showScreen('screen-auth'); return; }
+  afterLogin();
+}
+
+init();
 </script>
 </body>
 </html>
