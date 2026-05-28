@@ -224,10 +224,14 @@ body {
 .section-title { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin: 18px 0 10px; }
 .ex-card {
   background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: var(--radius); padding: 14px; margin-bottom: 10px; transition: border-color .2s;
+  border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
+  transition: border-color .2s, box-shadow .2s; overflow: hidden;
 }
 .ex-card.active { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,.07); }
-.ex-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.ex-head {
+  display: flex; align-items: center; gap: 12px; cursor: pointer;
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+}
 .ex-icon-wrap {
   width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center;
   justify-content: center; font-size: 20px; flex-shrink: 0;
@@ -236,35 +240,64 @@ body {
 .coral-icon { background: var(--coral-light); color: var(--coral); }
 .ex-info { flex: 1; min-width: 0; }
 .ex-name { font-size: 14px; font-weight: 600; }
-.ex-desc { font-size: 12px; color: var(--text2); }
+.ex-desc { font-size: 12px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ex-rate {
   font-size: 12px; color: var(--text3); text-align: right; flex-shrink: 0;
   padding: 3px 7px; border-radius: 6px; transition: all .2s;
 }
 .ex-rate.pos { background: var(--green-light); color: var(--green-dark); font-weight: 600; }
-.slider-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.slider-label { font-size: 11px; color: var(--text3); min-width: 18px; }
-input[type=range] {
-  flex: 1; -webkit-appearance: none; appearance: none; height: 6px;
-  background: var(--surface2); border-radius: 3px; cursor: pointer; outline: none;
+.ex-chevron { color: var(--text3); font-size: 18px; flex-shrink: 0; transition: transform .25s; }
+.ex-card.open .ex-chevron { transform: rotate(180deg); }
+
+/* collapsible body */
+.ex-body { display: none; margin-top: 14px; }
+.ex-card.open .ex-body { display: block; animation: exBodyIn .25s ease; }
+@keyframes exBodyIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* stepper */
+.stepper { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.step-btn {
+  width: 46px; height: 46px; border-radius: 12px; border: 1.5px solid var(--border2);
+  background: var(--surface); color: var(--text); font-size: 24px; line-height: 1; font-weight: 400;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+  transition: background .12s, transform .08s, border-color .12s;
 }
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%;
-  background: var(--green); box-shadow: 0 0 0 1px var(--green); cursor: pointer;
+.step-btn:hover { border-color: var(--green); color: var(--green); }
+.step-btn:active { transform: scale(.9); background: var(--surface2); }
+.step-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; border-color: var(--border2); color: var(--text); }
+.step-val-wrap { flex: 1; display: flex; align-items: baseline; justify-content: center; gap: 4px; min-width: 0; }
+.step-val {
+  width: 68px; max-width: 40vw; text-align: center; font-size: 22px; font-weight: 700; color: var(--text);
+  background: transparent; border: none; border-bottom: 2px solid var(--border2); outline: none;
+  font-family: inherit; padding: 2px 0; transition: border-color .15s;
 }
-input[type=range]::-moz-range-thumb {
-  width: 18px; height: 18px; border-radius: 50%; border: none;
-  background: var(--green); cursor: pointer;
+.step-val:focus { border-color: var(--green); }
+.step-val::-webkit-outer-spin-button, .step-val::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.step-val[type=number] { -moz-appearance: textfield; appearance: textfield; }
+.step-unit { font-size: 13px; color: var(--text3); flex-shrink: 0; }
+.ex-clear {
+  width: 32px; height: 32px; border-radius: 8px; border: none; background: var(--surface2);
+  color: var(--text3); font-size: 18px; line-height: 1; cursor: pointer; flex-shrink: 0;
+  display: none; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;
 }
-.slider-readout { font-size: 13px; font-weight: 500; min-width: 46px; text-align: right; }
+.ex-card.active .ex-clear { display: flex; }
+.ex-clear:active { transform: scale(.9); }
+
 .hints { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .hint {
-  padding: 6px 4px; border: 1px solid var(--border2); border-radius: var(--radius-sm);
+  padding: 8px 4px; border: 1px solid var(--border2); border-radius: var(--radius-sm);
   text-align: center; cursor: pointer; font-size: 11px; color: var(--text2);
-  transition: border-color .15s, color .15s; line-height: 1.4;
+  transition: border-color .15s, color .15s, background .15s; line-height: 1.4;
+  -webkit-tap-highlight-color: transparent;
 }
 .hint b { display: block; font-size: 12px; color: var(--text); }
 .hint:hover { border-color: var(--green); color: var(--green); }
+.hint.on { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+.hint.on b { color: var(--green-dark); }
+@media (max-width: 360px) {
+  .hints { grid-template-columns: repeat(2, 1fr); }
+}
 
 /* === SAVE BUTTON === */
 .save-wrap { margin-top: 20px; text-align: center; }
@@ -448,10 +481,12 @@ input[type=range]::-moz-range-thumb {
 /* === ADVANCED MODE === */
 body.advanced .score-num { color: var(--red); }
 body.advanced .bar-fill { background: linear-gradient(90deg, #C0392B, #E74C3C); }
-body.advanced input[type=range]::-webkit-slider-thumb { background: var(--red); box-shadow: 0 0 0 1px var(--red); }
-body.advanced input[type=range]::-moz-range-thumb { background: var(--red); }
 body.advanced .ex-card.active { border-color: var(--red); box-shadow: 0 0 0 3px rgba(192,57,43,.08); }
 body.advanced .hint:hover { border-color: var(--red); color: var(--red); }
+body.advanced .hint.on { border-color: var(--red); background: var(--red-light); color: #7B241C; }
+body.advanced .hint.on b { color: #7B241C; }
+body.advanced .step-btn:hover { border-color: var(--red); color: var(--red); }
+body.advanced .step-val:focus { border-color: var(--red); }
 body.advanced .green-icon { background: var(--red-light); color: #7B241C; }
 body.advanced .gpill.on { background: #7B241C; color: #FDECEA; border-color: transparent; }
 body.advanced .ex-rate.pos { background: var(--red-light); color: #7B241C; }
@@ -621,7 +656,7 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
           </div>
           <div class="bar-track"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
           <div class="bar-zones"><span>0</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
-          <div class="status-msg" id="statusMsg">Передвиньте ползунок нужного упражнения</div>
+          <div class="status-msg" id="statusMsg">Выберите упражнение и укажите время</div>
           <div class="reset-row">
             <button class="adv-btn" id="advBtn" onclick="toggleAdvanced()">
               <i class="ti ti-flame"></i> Продвинутый уровень
@@ -1090,29 +1125,69 @@ function buildExCards() {
     card.className = 'ex-card';
     card.id = 'card-' + e.id;
     card.innerHTML = `
-      <div class="ex-head">
+      <div class="ex-head" onclick="toggleCard('${e.id}')">
         <div class="ex-icon-wrap ${e.iconClass}"><i class="ti ${e.icon}"></i></div>
         <div class="ex-info">
           <div class="ex-name">${e.name}</div>
           <div class="ex-desc">${e.desc}</div>
         </div>
         <div class="ex-rate" id="rate-${e.id}">${e.meta}</div>
+        <i class="ti ti-chevron-down ex-chevron"></i>
       </div>
-      <div class="slider-wrap">
-        <span class="slider-label">0</span>
-        <input type="range" id="sl-${e.id}" min="0" max="${e.max}" step="${e.step}" value="0"
-          oninput="vals['${e.id}']=+this.value; updateTrackerUI()" aria-label="${e.name}">
-        <span class="slider-label">${e.max}</span>
-        <span class="slider-readout" id="ro-${e.id}">0 мин</span>
-      </div>
-      <div class="hints">
-        ${e.hints.map(h => `
-          <div class="hint" onclick="setVal('${e.id}',${h.val})">
-            <b>${h.label}</b>${h.pts.toLocaleString('ru')} б
-          </div>`).join('')}
+      <div class="ex-body">
+        <div class="stepper">
+          <button type="button" class="step-btn" id="dec-${e.id}" aria-label="Меньше"
+            onclick="stepVal('${e.id}',-1)">−</button>
+          <span class="step-val-wrap">
+            <input type="number" class="step-val" id="ro-${e.id}" value="0" min="0" max="${e.max}"
+              inputmode="numeric" aria-label="Минуты — ${e.name}"
+              oninput="onValInput('${e.id}', this.value)"
+              onfocus="this.select()" onblur="onValBlur('${e.id}')">
+            <span class="step-unit">мин</span>
+          </span>
+          <button type="button" class="step-btn" id="inc-${e.id}" aria-label="Больше"
+            onclick="stepVal('${e.id}',1)">+</button>
+          <button type="button" class="ex-clear" aria-label="Очистить"
+            onclick="setVal('${e.id}',0)">×</button>
+        </div>
+        <div class="hints" id="hints-${e.id}">
+          ${e.hints.map(h => `
+            <div class="hint" data-val="${h.val}" onclick="setVal('${e.id}',${h.val})">
+              <b>${h.label}</b>${h.pts.toLocaleString('ru')} б
+            </div>`).join('')}
+        </div>
       </div>`;
     container.appendChild(card);
   });
+}
+
+function haptic(ms = 10) { if (navigator.vibrate) try { navigator.vibrate(ms); } catch (_) {} }
+
+function toggleCard(id) {
+  document.getElementById('card-' + id).classList.toggle('open');
+}
+
+function stepVal(id, dir) {
+  const e = exercises.find(x => x.id === id);
+  const next = Math.max(0, Math.min(e.max, (vals[id] || 0) + dir * e.step));
+  if (next === vals[id]) return;
+  vals[id] = next;
+  haptic();
+  updateTrackerUI();
+}
+
+function onValInput(id, raw) {
+  const e = exercises.find(x => x.id === id);
+  let v = parseInt(raw, 10);
+  if (isNaN(v)) v = 0;
+  vals[id] = Math.max(0, Math.min(e.max, v));
+  updateTrackerUI();
+}
+
+function onValBlur(id) {
+  // Reflect clamped/normalized value back into the field after manual entry
+  const inp = document.getElementById('ro-' + id);
+  if (inp) inp.value = vals[id] || 0;
 }
 
 function totalPts() { return exercises.reduce((s, e) => s + vals[e.id] * e.pts, 0); }
@@ -1125,7 +1200,7 @@ function updateTrackerUI() {
 
   const msgEl = document.getElementById('statusMsg');
   let msg = '';
-  if (t === 0)            msg = 'Передвиньте ползунок нужного упражнения';
+  if (t === 0)            msg = 'Выберите упражнение и укажите время';
   else if (t < goal*.3)   msg = 'Хорошее начало — продолжайте!';
   else if (t < goal*.65)  msg = 'Больше половины пути!';
   else if (t < goal)      msg = 'Финальный рывок — вы почти у цели!';
@@ -1134,11 +1209,28 @@ function updateTrackerUI() {
   msgEl.className = 'status-msg' + (t >= goal ? ' done' : '');
 
   exercises.forEach(e => {
-    const earned = vals[e.id] * e.pts;
-    document.getElementById('rate-' + e.id).textContent = earned > 0 ? '+' + earned.toLocaleString('ru') + ' б' : e.meta;
-    document.getElementById('rate-' + e.id).className = 'ex-rate' + (earned > 0 ? ' pos' : '');
-    document.getElementById('card-' + e.id).className = 'ex-card' + (vals[e.id] > 0 ? ' active' : '');
-    document.getElementById('ro-' + e.id).textContent = vals[e.id] + ' мин';
+    const v = vals[e.id];
+    const earned = v * e.pts;
+    const card = document.getElementById('card-' + e.id);
+    const rate = document.getElementById('rate-' + e.id);
+    rate.textContent = earned > 0 ? '+' + earned.toLocaleString('ru') + ' б' : e.meta;
+    rate.className = 'ex-rate' + (earned > 0 ? ' pos' : '');
+    card.classList.toggle('active', v > 0);
+    if (v > 0) card.classList.add('open'); // active exercises auto-expand
+
+    // Sync the number field (skip while user is typing in it)
+    const inp = document.getElementById('ro-' + e.id);
+    if (inp && document.activeElement !== inp) inp.value = v;
+
+    // Disable steppers at bounds
+    const dec = document.getElementById('dec-' + e.id);
+    const inc = document.getElementById('inc-' + e.id);
+    if (dec) dec.disabled = v <= 0;
+    if (inc) inc.disabled = v >= e.max;
+
+    // Highlight matching preset chip
+    document.querySelectorAll('#hints-' + e.id + ' .hint').forEach(h =>
+      h.classList.toggle('on', +h.dataset.val === v));
   });
 }
 
@@ -1166,16 +1258,20 @@ function toggleAdvanced() {
 
 function setVal(id, v) {
   vals[id] = v;
-  document.getElementById('sl-' + id).value = v;
+  haptic();
   updateTrackerUI();
 }
 
 function resetAll() {
-  exercises.forEach(e => { vals[e.id] = 0; const sl = document.getElementById('sl-' + e.id); if(sl) sl.value = 0; });
+  exercises.forEach(e => {
+    vals[e.id] = 0;
+    document.getElementById('card-' + e.id)?.classList.remove('open');
+  });
+  haptic(15);
   updateTrackerUI();
 }
 
-// ---- Load today's workout to pre-fill sliders ----
+// ---- Load today's workout to pre-fill values ----
 async function loadTodayWorkout() {
   if (!currentUser) return;
   const today = todayStr();
@@ -1185,14 +1281,9 @@ async function loadTodayWorkout() {
     document.getElementById('saveStatus').textContent = '';
     return;
   }
-  // Pre-fill sliders
+  // Pre-fill values from saved workout
   const ex = data.exercises || {};
-  exercises.forEach(e => {
-    const v = ex[e.id] || 0;
-    vals[e.id] = v;
-    const sl = document.getElementById('sl-' + e.id);
-    if (sl) sl.value = v;
-  });
+  exercises.forEach(e => { vals[e.id] = ex[e.id] || 0; });
   // Restore goal from saved workout
   if (data.goal) {
     const base = advancedMode ? data.goal / 3 : data.goal;
