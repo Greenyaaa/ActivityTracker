@@ -1231,7 +1231,9 @@ function updateTrackerUI() {
     rate.textContent = earned > 0 ? '+' + earned.toLocaleString('ru') + ' б' : e.meta;
     rate.className = 'ex-rate' + (earned > 0 ? ' pos' : '');
     card.classList.toggle('active', v > 0);
-    if (v > 0) card.classList.add('open'); // active exercises auto-expand
+    // NOTE: don't auto-expand here — it would re-open cards the user
+    // manually collapsed every time any value changes. Expansion of active
+    // cards happens only on initial pre-fill (see loadTodayWorkout).
 
     // Sync the number field (skip while user is typing in it)
     const inp = document.getElementById('ro-' + e.id);
@@ -1296,9 +1298,12 @@ async function loadTodayWorkout() {
     document.getElementById('saveStatus').textContent = '';
     return;
   }
-  // Pre-fill values from saved workout
+  // Pre-fill values from saved workout, and expand the active cards
   const ex = data.exercises || {};
-  exercises.forEach(e => { vals[e.id] = ex[e.id] || 0; });
+  exercises.forEach(e => {
+    vals[e.id] = ex[e.id] || 0;
+    document.getElementById('card-' + e.id)?.classList.toggle('open', vals[e.id] > 0);
+  });
   // Restore goal from saved workout
   if (data.goal) {
     const base = advancedMode ? data.goal / 3 : data.goal;
