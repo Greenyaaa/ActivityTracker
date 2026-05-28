@@ -840,8 +840,20 @@ let advancedMode = false;
 // UTILS
 // ================================================================
 function uid() { return crypto.randomUUID(); }
-function todayStr() { return new Date().toISOString().split('T')[0]; }
-function yesterdayStr() { return new Date(Date.now() - 86400000).toISOString().split('T')[0]; }
+// Local-date string (YYYY-MM-DD) — NOT UTC. toISOString() returns UTC, which
+// rolls over to "tomorrow"/"yesterday" for users east/west of GMT after midnight.
+function localDateStr(d = new Date()) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+function todayStr() { return localDateStr(); }
+function yesterdayStr() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1); // DST-safe: operates on local calendar day
+  return localDateStr(d);
+}
 function avatarUrl(seed, style) {
   return `${DICEBEAR_BASE}/${style || 'adventurer'}/svg?seed=${encodeURIComponent(seed)}&radius=50`;
 }
