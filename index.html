@@ -179,16 +179,13 @@ body {
 .streak-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .streak-main { font-size: 15px; font-weight: 600; }
 .streak-record { font-size: 12px; color: var(--text3); }
-.streak-bar-wrap { position: relative; height: 8px; background: var(--surface2); border-radius: 4px; margin-bottom: 6px; }
-.streak-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--green), #5DCAA5); transition: width .4s; }
-.streak-milestones { display: flex; justify-content: space-between; }
-.streak-ms {
-  font-size: 10px; color: var(--text3); display: flex; flex-direction: column;
-  align-items: center; gap: 1px;
-}
-.streak-ms.reached { color: var(--green); }
-.streak-ms-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); }
-.streak-ms.reached .streak-ms-dot { background: var(--green); }
+.streak-bar-wrap { position: relative; height: 8px; background: var(--surface2); border-radius: 4px; margin-bottom: 20px; overflow: visible; }
+.streak-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--green), #5DCAA5); transition: width .4s; position: relative; z-index: 1; }
+.streak-ms-marker { position: absolute; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 2; }
+.streak-ms-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
+.streak-ms-label { font-size: 10px; color: var(--text3); margin-top: 9px; white-space: nowrap; }
+.streak-ms-marker.reached .streak-ms-dot { background: var(--green); }
+.streak-ms-marker.reached .streak-ms-label { color: var(--green); }
 
 /* === SCORE CARD === */
 .score-card {
@@ -460,8 +457,8 @@ body.advanced .gpill.on { background: #7B241C; color: #FDECEA; border-color: tra
 body.advanced .ex-rate.pos { background: var(--red-light); color: #7B241C; }
 body.advanced .btn-save { background: var(--red); }
 body.advanced .streak-bar-fill { background: linear-gradient(90deg, var(--red), #E74C3C); }
-body.advanced .streak-ms.reached { color: var(--red); }
-body.advanced .streak-ms.reached .streak-ms-dot { background: var(--red); }
+body.advanced .streak-ms-marker.reached .streak-ms-label { color: var(--red); }
+body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red); }
 @media (prefers-color-scheme: dark) {
   body.advanced { --red: #E74C3C; --red-light: #4A1010; }
 }
@@ -1289,12 +1286,10 @@ async function renderStreakWidget() {
     </div>
     <div class="streak-bar-wrap">
       <div class="streak-bar-fill" style="width:${pct}%"></div>
-    </div>
-    <div class="streak-milestones">
       ${MILESTONES.map(m => `
-        <div class="streak-ms ${cur >= m ? 'reached' : ''}">
+        <div class="streak-ms-marker ${cur >= m ? 'reached' : ''}" style="left:${(m/maxMs)*100}%">
           <div class="streak-ms-dot"></div>
-          <span>${m}</span>
+          <span class="streak-ms-label">${m}</span>
         </div>`).join('')}
     </div>`;
 }
