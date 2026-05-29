@@ -954,7 +954,9 @@ function avatarSrc(p) {
   return (p && p.avatar_url) ? p.avatar_url : avatarUrl(p?.avatar_seed, p?.avatar_style);
 }
 function avatarImg(p, size = 44) {
-  return `<img class="avatar-img" src="${avatarSrc(p)}" width="${size}" height="${size}" alt="avatar">`;
+  const fb = avatarUrl(p?.avatar_seed, p?.avatar_style); // DiceBear fallback if photo fails
+  return `<img class="avatar-img" src="${avatarSrc(p)}" width="${size}" height="${size}" alt="avatar"
+    onerror="this.onerror=null;this.src='${fb}'">`;
 }
 function formatDate(d) {
   const dt = new Date(d + 'T12:00:00');
@@ -1261,7 +1263,8 @@ function applyProfile() {
 function renderWaiting() {
   const p = currentProfile;
   document.getElementById('waitingAvatar').innerHTML =
-    `<img class="avatar-img" src="${avatarSrc(p)}" style="width:80px;height:80px;border-radius:50%;margin:0 auto 16px;display:block">`;
+    `<img class="avatar-img" src="${avatarSrc(p)}" style="width:80px;height:80px;border-radius:50%;margin:0 auto 16px;display:block"
+      onerror="this.onerror=null;this.src='${avatarUrl(p.avatar_seed, p.avatar_style)}'">`;
 }
 
 // ================================================================
@@ -1894,7 +1897,8 @@ async function renderProfile() {
 
   document.getElementById('profileAvatar').innerHTML = `
     <div class="profile-avatar-wrap">
-      <img src="${avatarSrc(p)}" class="avatar-img" style="width:80px;height:80px;border-radius:50%;display:block">
+      <img src="${avatarSrc(p)}" class="avatar-img" style="width:80px;height:80px;border-radius:50%;display:block"
+        onerror="this.onerror=null;this.src='${avatarUrl(p.avatar_seed, p.avatar_style)}'">
       <div class="avatar-cam-badge" title="Изменить фото"
         onclick="document.getElementById('avatarFileInput').click()"><i class="ti ti-camera"></i></div>
     </div>`;
@@ -2046,17 +2050,28 @@ async function confirmCrop() {
   const okBtn = document.getElementById('cropOkBtn');
   okBtn.disabled = true;
   try {
-    // Map the circular/square viewport back to source pixels
-    const inv = _crop.img.naturalWidth / _crop.rw; // == naturalHeight / rh
-    const sx = -_crop.x * inv, sy = -_crop.y * inv, s = _crop.vp * inv;
+    const nw = _crop.img.naturalWidth, nh = _crop.img.naturalHeight;
+    // Map the square viewport back to source pixels, clamped to image bounds
+    const inv = nw / _crop.rw; // == nh / rh
+    let s = Math.min(_crop.vp * inv, nw, nh);
+    let sx = Math.max(0, Math.min(-_crop.x * inv, nw - s));
+    let sy = Math.max(0, Math.min(-_crop.y * inv, nh - s));
+
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = AVATAR_OUT_SIZE;
     const ctx = canvas.getContext('2d');
+    // White base — JPEG has no alpha, so any uncovered pixel would otherwise
+    // flatten to BLACK. This guarantees a visible result.
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, AVATAR_OUT_SIZE, AVATAR_OUT_SIZE);
+    ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(_crop.img, sx, sy, s, s, 0, 0, AVATAR_OUT_SIZE, AVATAR_OUT_SIZE);
-    const blob = await new Promise(res => {
-      canvas.toBlob(b => b ? res(b) : canvas.toBlob(j => res(j), 'image/jpeg', 0.85), 'image/webp', 0.85);
-    });
+
+    // JPEG is the most reliable canvas encoder across browsers (WebP returns
+    // black frames on some Android/iOS GPU paths).
+    const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
+    if (!blob || blob.size < 1024) { showToast('Не удалось обработать фото'); return; }
     document.getElementById('cropModal').classList.add('hidden');
     await uploadAvatarBlob(blob);
   } catch (err) {
