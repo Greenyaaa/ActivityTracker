@@ -93,7 +93,7 @@ body {
 
 /* Avatar grid */
 .avatar-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
   margin-bottom: 14px;
 }
 .avatar-option {
@@ -104,6 +104,20 @@ body {
 .avatar-option img { width: 100%; height: 100%; object-fit: cover; }
 .avatar-option.selected { border-color: var(--green); transform: scale(1.06); }
 .avatar-style-row { display: flex; justify-content: center; margin-bottom: 16px; }
+
+/* Avatar preview + style chips (registration) */
+.avatar-preview-wrap { display: flex; justify-content: center; margin-bottom: 14px; }
+.avatar-preview {
+  width: 96px; height: 96px; border-radius: 50%; border: 3px solid var(--green);
+  background: var(--surface2); object-fit: cover; display: block;
+}
+.avatar-style-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 14px; }
+.style-chip {
+  padding: 6px 12px; border: 1.5px solid var(--border2); border-radius: 20px; font-size: 12px;
+  color: var(--text2); cursor: pointer; background: var(--surface);
+  -webkit-tap-highlight-color: transparent; transition: border-color .15s, background .15s, color .15s;
+}
+.style-chip.on { border-color: var(--green); background: var(--green-light); color: var(--green-dark); font-weight: 600; }
 
 /* Role cards */
 .role-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 4px; }
@@ -594,10 +608,14 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
       <!-- Step 1: Avatar -->
       <div class="auth-step" id="reg-step-1">
         <div class="step-label">Выберите аватарку</div>
+        <div class="avatar-preview-wrap">
+          <img id="avatarPreview" class="avatar-preview" alt="Превью аватара">
+        </div>
+        <div class="avatar-style-chips" id="avatarStyleChips"></div>
         <div class="avatar-grid" id="avatarGrid"></div>
         <div class="avatar-style-row">
           <button class="btn-outline" style="width:auto;padding:8px 18px" onclick="shuffleAvatars()">
-            <i class="ti ti-refresh"></i> Перемешать
+            <i class="ti ti-refresh"></i> Ещё варианты
           </button>
         </div>
         <button class="btn-primary" style="margin-top:16px" onclick="goRegStep(2)">Далее →</button>
@@ -853,6 +871,10 @@ const SUPABASE_URL = 'https://zsazpltqcphcfivrqoyo.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_sWbGo4yWROeIaye_nl6AcA_Jle19J4n';
 const DICEBEAR_BASE = 'https://api.dicebear.com/7.x';
 const AVATAR_STYLES = ['adventurer', 'lorelei', 'micah', 'notionists', 'pixel-art'];
+const AVATAR_STYLE_LABELS = {
+  'adventurer': 'Рисованный', 'lorelei': 'Лайн-арт', 'micah': 'Флэт',
+  'notionists': 'Минимал', 'pixel-art': 'Пиксель',
+};
 const padPin = (pin) => pin + '@AT2'; // Supabase требует мин. 6 символов, пользователь вводит 4+
 const BASE_GOALS = [7000, 8000, 9000, 10000];
 const MILESTONES = [1, 3, 7, 14, 21, 28, 31];
@@ -1007,10 +1029,43 @@ function switchAuthTab(which) {
 }
 
 // ---- Avatar picker ----
+// "Pick a vibe, then a face": user chooses a style (chips), then a face (grid).
+// A hero preview shows the current selection; "Ещё варианты" re-rolls faces
+// within the chosen style only (never changes the style).
 let _avatarSeeds = [];
+const AVATAR_GRID_SIZE = 6;
+
 function buildAvatarGrid() {
-  _avatarSeeds = Array.from({length: 8}, () => Math.random().toString(36).slice(2, 10));
-  selectedAvatarStyle = AVATAR_STYLES[Math.floor(Math.random() * AVATAR_STYLES.length)];
+  if (!selectedAvatarStyle) selectedAvatarStyle = AVATAR_STYLES[0]; // deterministic default, not random
+  buildStyleChips();
+  rollAvatarFaces();
+}
+
+function buildStyleChips() {
+  const wrap = document.getElementById('avatarStyleChips');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  AVATAR_STYLES.forEach(style => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'style-chip' + (style === selectedAvatarStyle ? ' on' : '');
+    chip.textContent = AVATAR_STYLE_LABELS[style] || style;
+    chip.onclick = () => selectAvatarStyle(style);
+    wrap.appendChild(chip);
+  });
+}
+
+function selectAvatarStyle(style) {
+  if (style === selectedAvatarStyle) return;
+  selectedAvatarStyle = style;
+  document.querySelectorAll('#avatarStyleChips .style-chip').forEach((c, i) =>
+    c.classList.toggle('on', AVATAR_STYLES[i] === style));
+  rollAvatarFaces(); // fresh faces in the new style
+}
+
+function rollAvatarFaces() {
+  _avatarSeeds = Array.from({length: AVATAR_GRID_SIZE}, () => Math.random().toString(36).slice(2, 10));
+  selectedAvatarSeed = _avatarSeeds[0];
   const grid = document.getElementById('avatarGrid');
   grid.innerHTML = '';
   _avatarSeeds.forEach((seed, i) => {
@@ -1021,13 +1076,19 @@ function buildAvatarGrid() {
       document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
       div.classList.add('selected');
       selectedAvatarSeed = seed;
+      updateAvatarPreview();
     };
-    if (i === 0) selectedAvatarSeed = seed;
     grid.appendChild(div);
   });
+  updateAvatarPreview();
 }
 
-function shuffleAvatars() { buildAvatarGrid(); }
+function updateAvatarPreview() {
+  const el = document.getElementById('avatarPreview');
+  if (el) el.src = avatarUrl(selectedAvatarSeed, selectedAvatarStyle);
+}
+
+function shuffleAvatars() { rollAvatarFaces(); } // re-roll faces, keep the chosen style
 
 // ---- Nick check ----
 function debounceNickCheck(val) {
