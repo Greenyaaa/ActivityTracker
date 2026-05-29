@@ -40,6 +40,7 @@ Supabase Auth используется со схемой `nickname@activitytrack
 | `avatar_seed` | text | seed для генерации аватарки (DiceBear) |
 | `avatar_style` | text | стиль DiceBear (adventurer / lorelei / ...) |
 | `avatar_url` | text | URL кастомного фото в Storage (если задан — имеет приоритет над DiceBear) |
+| `lang` | text | язык интерфейса (`ru` / `pl` / `en`), nullable — если пусто, берётся из браузера |
 | `role` | enum | `user` / `trainer` / `admin` |
 | `is_active` | bool | false у тренера до подтверждения Админа |
 | `trainer_status` | enum | `pending` / `approved` / `rejected` / null |
@@ -468,7 +469,32 @@ create policy "avatars_owner_delete" on storage.objects
     and split_part(name, '.', 1) = auth.uid()::text
   );
 ```
+
+---
+
+## Интернационализация (RU / PL / EN) — реализовано
+
+Интерфейс доступен на русском, польском и английском.
+
+**Движок (`index.html`, без сторонних либ):**
+- Словарь `I18N = { ru, pl, en }` по плоским ключам (`auth.*`, `tracker.*`, `ex.*`, …).
+- `t(key, params)` — строка текущего языка, подстановка `{n}`, **фолбэк на EN**, затем на сам ключ.
+- Статический HTML — атрибуты `data-i18n` / `data-i18n-ph` / `data-i18n-alt` / `data-i18n-title`; `applyTranslations()` проставляет текст.
+- Динамический JS-контент — строки через `t()`; смена языка вызывает `rerenderForLang()` (перестроение карточек/виджетов/открытого таба).
+- Числа: `fmtNum`/`fmtPts` через `toLocaleString(LOCALE[lang])`. Даты — `toLocaleDateString(LOCALE[lang])`. Склонения — `Intl.PluralRules` (`tp('unit.day', n)`), покрывает 3 формы RU/PL и простые EN.
+- Длительности подсказок вычисляются (`fmtDuration`), названия/описания упражнений — из словаря (`ex.<id>.name/.desc`), meta — из `kcal`.
+
+**Выбор языка:**
+- Старт: кэш `localStorage.at_lang` → иначе автоопределение `navigator.language` → иначе EN.
+- После логина `profiles.lang` (если задан) перекрывает локальный выбор.
+- Переключатель в Профиле (чипы Рус/Pol/Eng) → `setLang(lang, {persist:true})` пишет в `profiles.lang`.
+
+**Supabase (вручную):**
+```sql
+alter table profiles add column if not exists lang text; -- nullable: пусто = брать из браузера
 ```
+
+> ⚠️ Польские строки переведены машинно-аккуратно — носитель сможет подправить формулировки в словаре `I18N.pl`.
 
 ---
 

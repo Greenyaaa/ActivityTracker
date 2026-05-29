@@ -599,83 +599,83 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
     </div>
 
     <div class="auth-tabs">
-      <button class="auth-tab active" id="authTabReg" onclick="switchAuthTab('register')">Новый аккаунт</button>
-      <button class="auth-tab" id="authTabLogin" onclick="switchAuthTab('login')">Войти</button>
+      <button class="auth-tab active" id="authTabReg" onclick="switchAuthTab('register')" data-i18n="auth.tabRegister">Новый аккаунт</button>
+      <button class="auth-tab" id="authTabLogin" onclick="switchAuthTab('login')" data-i18n="auth.tabLogin">Войти</button>
     </div>
 
     <!-- REGISTER FLOW -->
     <div id="auth-register">
       <!-- Step 1: Avatar -->
       <div class="auth-step" id="reg-step-1">
-        <div class="step-label">Выберите аватарку</div>
+        <div class="step-label" data-i18n="auth.chooseAvatar">Выберите аватарку</div>
         <div class="avatar-preview-wrap">
-          <img id="avatarPreview" class="avatar-preview" alt="Превью аватара">
+          <img id="avatarPreview" class="avatar-preview" data-i18n-alt="auth.avatarPreviewAlt" alt="Превью аватара">
         </div>
         <div class="avatar-style-chips" id="avatarStyleChips"></div>
         <div class="avatar-grid" id="avatarGrid"></div>
         <div class="avatar-style-row">
           <button class="btn-outline" style="width:auto;padding:8px 18px" onclick="shuffleAvatars()">
-            <i class="ti ti-refresh"></i> Ещё варианты
+            <i class="ti ti-refresh"></i> <span data-i18n="auth.moreVariants">Ещё варианты</span>
           </button>
         </div>
-        <button class="btn-primary" style="margin-top:16px" onclick="goRegStep(2)">Далее →</button>
+        <button class="btn-primary" style="margin-top:16px" onclick="goRegStep(2)" data-i18n="common.next">Далее →</button>
       </div>
 
       <!-- Step 2: Nick + PIN -->
       <div class="auth-step hidden" id="reg-step-2">
-        <div class="step-label">Придумайте ник</div>
+        <div class="step-label" data-i18n="auth.enterNick">Придумайте ник</div>
         <div class="input-wrap">
-          <input type="text" id="reg-nick" placeholder="буквы, цифры, _" maxlength="20" autocomplete="off"
+          <input type="text" id="reg-nick" placeholder="буквы, цифры, _" data-i18n-ph="auth.nickPlaceholder" maxlength="20" autocomplete="off"
             oninput="debounceNickCheck(this.value)">
           <span class="nick-status" id="nickStatus"></span>
         </div>
         <div style="margin-top:14px">
-          <div class="step-label">PIN (4–6 цифр)</div>
+          <div class="step-label" data-i18n="auth.pinLabel">PIN (4–6 цифр)</div>
           <div class="input-wrap">
             <input type="password" id="reg-pin" placeholder="••••" maxlength="6" inputmode="numeric" autocomplete="new-password">
           </div>
         </div>
         <div style="margin-top:10px">
-          <div class="step-label">Повторите PIN</div>
+          <div class="step-label" data-i18n="auth.pinRepeat">Повторите PIN</div>
           <div class="input-wrap">
             <input type="password" id="reg-pin2" placeholder="••••" maxlength="6" inputmode="numeric" autocomplete="new-password">
           </div>
         </div>
         <div id="reg-step2-error" class="error-msg hidden"></div>
         <div class="row-gap">
-          <button class="btn-outline" onclick="goRegStep(1)">← Назад</button>
-          <button class="btn-primary" onclick="goRegStep(3)">Далее →</button>
+          <button class="btn-outline" onclick="goRegStep(1)" data-i18n="common.back">← Назад</button>
+          <button class="btn-primary" onclick="goRegStep(3)" data-i18n="common.next">Далее →</button>
         </div>
       </div>
 
       <!-- Step 3: Role -->
       <div class="auth-step hidden" id="reg-step-3">
-        <div class="step-label">Выберите роль</div>
+        <div class="step-label" data-i18n="auth.chooseRole">Выберите роль</div>
         <div class="role-cards">
           <div class="role-card active" id="role-card-user" onclick="selectRole('user')">
             <div class="role-icon">👤</div>
-            <div class="role-name">Пользователь</div>
-            <div class="role-desc">Трекер активности, друзья, стрики</div>
+            <div class="role-name" data-i18n="auth.roleUser">Пользователь</div>
+            <div class="role-desc" data-i18n="auth.roleUserDesc">Трекер активности, друзья, стрики</div>
           </div>
           <div class="role-card" id="role-card-trainer" onclick="selectRole('trainer')">
             <div class="role-icon">🏋️</div>
-            <div class="role-name">Тренер</div>
-            <div class="role-desc">Группы и дашборд участников (требует подтверждения Админа)</div>
+            <div class="role-name" data-i18n="auth.roleTrainer">Тренер</div>
+            <div class="role-desc" data-i18n="auth.roleTrainerDesc">Группы и дашборд участников (требует подтверждения Админа)</div>
           </div>
         </div>
         <div id="reg-step3-error" class="error-msg hidden"></div>
         <div class="row-gap" style="margin-top:16px">
-          <button class="btn-outline" onclick="goRegStep(2)">← Назад</button>
-          <button class="btn-primary" id="btn-create" onclick="register()">Создать аккаунт</button>
+          <button class="btn-outline" onclick="goRegStep(2)" data-i18n="common.back">← Назад</button>
+          <button class="btn-primary" id="btn-create" onclick="register()" data-i18n="auth.createAccount">Создать аккаунт</button>
         </div>
       </div>
     </div>
 
     <!-- LOGIN -->
     <div id="auth-login" class="hidden">
-      <div class="step-label">Ник</div>
+      <div class="step-label" data-i18n="auth.loginNick">Ник</div>
       <div class="input-wrap">
-        <input type="text" id="login-nick" placeholder="ваш ник" autocomplete="username">
+        <input type="text" id="login-nick" placeholder="ваш ник" data-i18n-ph="auth.loginNickPlaceholder" autocomplete="username">
       </div>
       <div style="margin-top:12px">
         <div class="step-label">PIN</div>
@@ -685,8 +685,8 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
         </div>
       </div>
       <div id="login-error" class="error-msg hidden"></div>
-      <button class="btn-primary" style="margin-top:16px" onclick="login()">Войти</button>
-      <p class="hint-text">Используйте тот же ник и PIN с любого устройства.<br>Если PIN утерян — аккаунт не восстанавливается.</p>
+      <button class="btn-primary" style="margin-top:16px" onclick="login()" data-i18n="auth.signIn">Войти</button>
+      <p class="hint-text" data-i18n="auth.loginHint">Используйте тот же ник и PIN с любого устройства.<br>Если PIN утерян — аккаунт не восстанавливается.</p>
     </div>
   </div>
 
@@ -694,9 +694,9 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
   <div id="screen-waiting" class="screen hidden">
     <div class="waiting-wrap">
       <div id="waitingAvatar"></div>
-      <div class="waiting-title">Заявка на рассмотрении</div>
-      <div class="waiting-text">Ваш аккаунт тренера ожидает подтверждения Администратора.<br>Обычно это занимает до 24 часов.</div>
-      <button class="btn-danger" onclick="signOut()"><i class="ti ti-logout"></i> Выйти</button>
+      <div class="waiting-title" data-i18n="waiting.title">Заявка на рассмотрении</div>
+      <div class="waiting-text" data-i18n="waiting.text">Ваш аккаунт тренера ожидает подтверждения Администратора.<br>Обычно это занимает до 24 часов.</div>
+      <button class="btn-danger" onclick="signOut()"><i class="ti ti-logout"></i> <span data-i18n="common.signOut">Выйти</span></button>
     </div>
   </div>
 
@@ -717,7 +717,7 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
           <div class="score-top">
             <div>
               <div class="score-num" id="totalPts">0</div>
-              <div class="score-of">баллов из <span id="goalLabel">7 000</span></div>
+              <div class="score-of"><span data-i18n="tracker.scoreOf">баллов из</span> <span id="goalLabel">7 000</span></div>
             </div>
             <div class="goal-pills">
               <button class="gpill on" id="g7000" onclick="setGoal(7000)">7 000</button>
@@ -728,52 +728,52 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
           </div>
           <div class="bar-track"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
           <div class="bar-zones"><span>0</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
-          <div class="status-msg" id="statusMsg">Выберите упражнение и укажите время</div>
+          <div class="status-msg" id="statusMsg" data-i18n="tracker.statusEmpty">Выберите упражнение и укажите время</div>
           <div class="reset-row">
             <button class="adv-btn" id="advBtn" onclick="toggleAdvanced()">
-              <i class="ti ti-flame"></i> Продвинутый уровень
+              <i class="ti ti-flame"></i> <span data-i18n="tracker.advanced">Продвинутый уровень</span>
             </button>
             <button class="reset-btn" onclick="resetAll()">
-              <i class="ti ti-refresh"></i> Сбросить
+              <i class="ti ti-refresh"></i> <span data-i18n="tracker.reset">Сбросить</span>
             </button>
           </div>
         </div>
 
-        <div class="section-title">Выберите активность</div>
+        <div class="section-title" data-i18n="tracker.sectionActivity">Выберите активность</div>
         <div id="exCards"></div>
 
         <div class="save-wrap">
           <div id="saveStatus" class="save-status"></div>
           <button class="btn-save" id="btnSave" onclick="saveWorkout()">
-            <i class="ti ti-device-floppy"></i> Сохранить тренировку
+            <i class="ti ti-device-floppy"></i> <span data-i18n="tracker.save">Сохранить тренировку</span>
           </button>
         </div>
       </div>
 
       <!-- TAB: HISTORY -->
       <div id="tab-history" class="tab hidden">
-        <div class="section-title">История тренировок</div>
+        <div class="section-title" data-i18n="history.title">История тренировок</div>
         <div id="historyList"></div>
       </div>
 
       <!-- TAB: FRIENDS -->
       <div id="tab-friends" class="tab hidden">
         <div class="search-wrap">
-          <input type="text" id="friendSearch" placeholder="🔍 Поиск по нику..."
+          <input type="text" id="friendSearch" placeholder="🔍 Поиск по нику..." data-i18n-ph="friends.searchPlaceholder"
             oninput="debounceFriendSearch(this.value)">
         </div>
         <div id="searchResults"></div>
         <div id="friendRequests"></div>
-        <div class="section-title" id="friendsListTitle">Друзья</div>
+        <div class="section-title" id="friendsListTitle" data-i18n="friends.title">Друзья</div>
         <div id="friendsList"></div>
       </div>
 
       <!-- TAB: GROUPS (trainer only) -->
       <div id="tab-groups" class="tab hidden">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <div class="section-title" style="margin:0">Мои группы</div>
+          <div class="section-title" style="margin:0" data-i18n="groups.title">Мои группы</div>
           <button class="btn-sm green" onclick="showCreateGroupModal()">
-            <i class="ti ti-plus"></i> Создать
+            <i class="ti ti-plus"></i> <span data-i18n="groups.create">Создать</span>
           </button>
         </div>
         <div id="groupsList"></div>
@@ -781,7 +781,7 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
 
       <!-- TAB: ADMIN -->
       <div id="tab-admin" class="tab hidden">
-        <div class="section-title">Заявки тренеров</div>
+        <div class="section-title" data-i18n="admin.title">Заявки тренеров</div>
         <div id="approvalsList"></div>
       </div>
 
@@ -794,12 +794,12 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
           <div id="profileNick" class="profile-nick"></div>
           <div id="profileRole" class="profile-role"></div>
         </div>
-        <div class="section-title">Статистика</div>
+        <div class="section-title" data-i18n="profile.statsTitle">Статистика</div>
         <div id="profileStats" class="stats-grid"></div>
-        <div class="section-title" style="margin-top:20px">Настройки</div>
+        <div class="section-title" style="margin-top:20px" data-i18n="profile.settingsTitle">Настройки</div>
         <div class="settings-card">
           <div class="setting-row">
-            <span>Цель по умолчанию</span>
+            <span data-i18n="profile.defaultGoal">Цель по умолчанию</span>
             <div class="goal-pills small" id="profileGoalPills">
               <button class="gpill" id="pg7000" onclick="setDefaultGoal(7000)">7 000</button>
               <button class="gpill" id="pg8000" onclick="setDefaultGoal(8000)">8 000</button>
@@ -807,9 +807,13 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
               <button class="gpill" id="pg10000" onclick="setDefaultGoal(10000)">10 000</button>
             </div>
           </div>
+          <div class="setting-row" style="margin-top:12px">
+            <span data-i18n="profile.language">Язык</span>
+            <div class="goal-pills small" id="profileLangChips"></div>
+          </div>
         </div>
         <button class="btn-danger" style="margin:32px auto;display:block;width:100%" onclick="signOut()">
-          <i class="ti ti-logout"></i> Выйти
+          <i class="ti ti-logout"></i> <span data-i18n="common.signOut">Выйти</span>
         </button>
       </div>
 
@@ -818,23 +822,23 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
       <button class="nav-btn active" id="nav-tracker" onclick="showTab('tracker')">
-        <i class="ti ti-bolt"></i><span>Трекер</span>
+        <i class="ti ti-bolt"></i><span data-i18n="nav.tracker">Трекер</span>
       </button>
       <button class="nav-btn" id="nav-history" onclick="showTab('history')">
-        <i class="ti ti-calendar-stats"></i><span>История</span>
+        <i class="ti ti-calendar-stats"></i><span data-i18n="nav.history">История</span>
       </button>
       <button class="nav-btn" id="nav-friends" onclick="showTab('friends')">
-        <i class="ti ti-users"></i><span>Друзья</span>
+        <i class="ti ti-users"></i><span data-i18n="nav.friends">Друзья</span>
         <span class="nav-badge hidden" id="badge-friends">0</span>
       </button>
       <button class="nav-btn hidden" id="nav-groups" onclick="showTab('groups')">
-        <i class="ti ti-tournament"></i><span>Группы</span>
+        <i class="ti ti-tournament"></i><span data-i18n="nav.groups">Группы</span>
       </button>
       <button class="nav-btn hidden" id="nav-admin" onclick="showTab('admin')">
-        <i class="ti ti-shield"></i><span>Админ</span>
+        <i class="ti ti-shield"></i><span data-i18n="nav.admin">Админ</span>
       </button>
       <button class="nav-btn" id="nav-profile" onclick="showTab('profile')">
-        <i class="ti ti-user"></i><span>Профиль</span>
+        <i class="ti ti-user"></i><span data-i18n="nav.profile">Профиль</span>
       </button>
     </nav>
   </div><!-- /screen-app -->
@@ -844,16 +848,16 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
 <!-- Avatar crop modal -->
 <div id="cropModal" class="modal-overlay hidden">
   <div class="modal-box">
-    <div class="modal-title">Кадрируйте фото</div>
+    <div class="modal-title" data-i18n="photo.cropTitle">Кадрируйте фото</div>
     <div class="crop-viewport" id="cropViewport">
       <img id="cropImg" alt="">
     </div>
-    <div class="crop-hint">Перетащите фото и подберите масштаб</div>
+    <div class="crop-hint" data-i18n="photo.cropHint">Перетащите фото и подберите масштаб</div>
     <input type="range" id="cropZoom" class="crop-zoom" min="1" max="4" step="0.01" value="1"
       oninput="onCropZoom(this.value)">
     <div class="modal-actions">
-      <button type="button" class="btn-modal-cancel" onclick="cancelCrop()">Отмена</button>
-      <button type="button" class="btn-modal-ok" id="cropOkBtn" onclick="confirmCrop()">Сохранить</button>
+      <button type="button" class="btn-modal-cancel" onclick="cancelCrop()" data-i18n="common.cancel">Отмена</button>
+      <button type="button" class="btn-modal-ok" id="cropOkBtn" onclick="confirmCrop()" data-i18n="common.save">Сохранить</button>
     </div>
   </div>
 </div>
@@ -871,22 +875,335 @@ const SUPABASE_URL = 'https://zsazpltqcphcfivrqoyo.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_sWbGo4yWROeIaye_nl6AcA_Jle19J4n';
 const DICEBEAR_BASE = 'https://api.dicebear.com/7.x';
 const AVATAR_STYLES = ['adventurer', 'lorelei', 'micah', 'notionists', 'pixel-art'];
-const AVATAR_STYLE_LABELS = {
-  'adventurer': 'Рисованный', 'lorelei': 'Лайн-арт', 'micah': 'Флэт',
-  'notionists': 'Минимал', 'pixel-art': 'Пиксель',
-};
 const padPin = (pin) => pin + '@AT2'; // Supabase требует мин. 6 символов, пользователь вводит 4+
 const BASE_GOALS = [7000, 8000, 9000, 10000];
 const MILESTONES = [1, 3, 7, 14, 21, 28, 31];
-const MILESTONE_DATA = {
-  1:  { medal: '🌱', msg: 'Первый шаг сделан! Начало положено' },
-  3:  { medal: '🔥', msg: '3 дня подряд — привычка начинает формироваться!' },
-  7:  { medal: '⭐', msg: 'Целая неделя! Ты молодец, так держать' },
-  14: { medal: '💪', msg: 'Две недели — это уже характер' },
-  21: { medal: '🏅', msg: '21 день — учёные говорят, привычка сформирована!' },
-  28: { medal: '🏆', msg: '28 дней без остановки — ты машина' },
-  31: { medal: '👑', msg: 'Полный месяц! Абсолютный рекорд' },
+const MILESTONE_MEDALS = { 1:'🌱', 3:'🔥', 7:'⭐', 14:'💪', 21:'🏅', 28:'🏆', 31:'👑' };
+
+// ================================================================
+// i18n — RU / PL / EN (fallback: EN)
+// ================================================================
+const SUPPORTED_LANGS = ['ru', 'pl', 'en'];
+const LOCALE = { ru: 'ru', pl: 'pl', en: 'en-GB' };
+const LANG_NAMES = { ru: 'Рус', pl: 'Pol', en: 'Eng' };
+
+const I18N = {
+  ru: {
+    'common.back': '← Назад', 'common.next': 'Далее →', 'common.cancel': 'Отмена', 'common.save': 'Сохранить',
+    'unit.min': 'мин', 'unit.pts': 'б', 'unit.kcalMin': 'ккал/мин',
+    'unit.hour.one': 'час', 'unit.hour.few': 'часа', 'unit.hour.many': 'часов', 'unit.hour.other': 'часа',
+    'unit.day.one': 'день', 'unit.day.few': 'дня', 'unit.day.many': 'дней', 'unit.day.other': 'дня',
+    'unit.member.one': 'участник', 'unit.member.few': 'участника', 'unit.member.many': 'участников', 'unit.member.other': 'участника',
+
+    'auth.tabRegister': 'Новый аккаунт', 'auth.tabLogin': 'Войти',
+    'auth.chooseAvatar': 'Выберите аватарку', 'auth.avatarPreviewAlt': 'Превью аватара', 'auth.moreVariants': 'Ещё варианты',
+    'auth.enterNick': 'Придумайте ник', 'auth.nickPlaceholder': 'буквы, цифры, _',
+    'auth.pinLabel': 'PIN (4–6 цифр)', 'auth.pinRepeat': 'Повторите PIN',
+    'auth.chooseRole': 'Выберите роль',
+    'auth.roleUser': 'Пользователь', 'auth.roleUserDesc': 'Трекер активности, друзья, стрики',
+    'auth.roleTrainer': 'Тренер', 'auth.roleTrainerDesc': 'Группы и дашборд участников (требует подтверждения Админа)',
+    'auth.createAccount': 'Создать аккаунт', 'auth.creating': 'Создаём…',
+    'auth.loginNick': 'Ник', 'auth.loginNickPlaceholder': 'ваш ник', 'auth.signIn': 'Войти',
+    'auth.loginHint': 'Используйте тот же ник и PIN с любого устройства.<br>Если PIN утерян — аккаунт не восстанавливается.',
+    'auth.errNickTaken': 'Проверьте ник — он должен быть свободен',
+    'auth.errPinShort': 'PIN должен быть минимум 4 цифры', 'auth.errPinMismatch': 'PIN не совпадает',
+    'auth.errChooseAvatar': 'Выберите аватарку',
+
+    'waiting.title': 'Заявка на рассмотрении',
+    'waiting.text': 'Ваш аккаунт тренера ожидает подтверждения Администратора.<br>Обычно это занимает до 24 часов.',
+    'common.signOut': 'Выйти',
+
+    'nav.tracker': 'Трекер', 'nav.history': 'История', 'nav.friends': 'Друзья',
+    'nav.groups': 'Группы', 'nav.admin': 'Админ', 'nav.profile': 'Профиль',
+
+    'tracker.scoreOf': 'баллов из', 'tracker.advanced': 'Продвинутый уровень', 'tracker.advancedOn': 'Продвинутый ✓',
+    'tracker.reset': 'Сбросить', 'tracker.sectionActivity': 'Выберите активность', 'tracker.save': 'Сохранить тренировку',
+    'tracker.statusEmpty': 'Выберите упражнение и укажите время', 'tracker.statusStart': 'Хорошее начало — продолжайте!',
+    'tracker.statusHalf': 'Больше половины пути!', 'tracker.statusFinal': 'Финальный рывок — вы почти у цели!',
+    'tracker.statusDone': '🏆 Цель достигнута! Отличная работа!',
+    'tracker.savedToday': '✅ Тренировка уже сохранена сегодня — можно изменить',
+    'tracker.saved': '✅ Тренировка сохранена!', 'tracker.savedToast': 'Тренировка сохранена 💪',
+    'tracker.clearAria': 'Очистить', 'tracker.lessAria': 'Меньше', 'tracker.moreAria': 'Больше', 'tracker.minutesAria': 'Минуты',
+
+    'streak.record': 'Рекорд', 'streak.daysInRow': 'подряд',
+    'milestone.1': 'Первый шаг сделан! Начало положено',
+    'milestone.3': '3 дня подряд — привычка начинает формироваться!',
+    'milestone.7': 'Целая неделя! Ты молодец, так держать',
+    'milestone.14': 'Две недели — это уже характер',
+    'milestone.21': '21 день — учёные говорят, привычка сформирована!',
+    'milestone.28': '28 дней без остановки — ты машина',
+    'milestone.31': 'Полный месяц! Абсолютный рекорд',
+
+    'history.title': 'История тренировок', 'history.emptyTitle': 'Тренировок пока нет', 'history.emptySub': 'Сохраните первую!',
+    'history.goalDone': '✅ Цель', 'history.goalMissed': '❌ Цель не выполнена', 'history.outOf': 'из',
+
+    'friends.searchPlaceholder': '🔍 Поиск по нику...', 'friends.title': 'Друзья', 'friends.nobody': 'Никого не найдено',
+    'friends.add': 'Добавить', 'friends.requestSent': 'Запрос отправлен', 'friends.alreadyFriends': 'Уже друзья',
+    'friends.accept': 'Принять', 'friends.incoming': 'Входящие запросы', 'friends.emptyTitle': 'Друзей пока нет',
+    'friends.emptySub': 'Найдите их через поиск выше', 'friends.notTrainedToday': 'Ещё не тренировался сегодня',
+    'friends.requestSentToast': 'Запрос отправлен!', 'friends.nowFriendsToast': 'Теперь вы друзья! 🤝',
+
+    'groups.title': 'Мои группы', 'groups.create': 'Создать', 'groups.emptyTitle': 'Групп пока нет',
+    'groups.emptySub': 'Создайте первую!', 'groups.dashboard': 'Дашборд', 'groups.invite': 'Пригласить',
+    'groups.promptName': 'Название группы:', 'groups.promptDesc': 'Описание (необязательно):',
+    'groups.createdToast': 'Группа создана!', 'groups.promptInvite': 'Ник пользователя для приглашения:',
+    'groups.userNotFound': 'Пользователь не найден', 'groups.invitedToast': '{nick} приглашён в группу!',
+    'groups.noMembers': 'В группе пока нет участников', 'groups.fallbackName': 'Группа',
+
+    'admin.title': 'Заявки тренеров', 'admin.empty': 'Нет заявок на рассмотрении', 'admin.requestFrom': 'Заявка от',
+    'admin.approve': '✓ Подтвердить', 'admin.reject': '✕ Отклонить', 'admin.approvedToast': 'Тренер подтверждён!',
+    'admin.promptReject': 'Причина отказа (необязательно):', 'admin.rejectedToast': 'Заявка отклонена',
+
+    'profile.statsTitle': 'Статистика', 'profile.settingsTitle': 'Настройки', 'profile.defaultGoal': 'Цель по умолчанию',
+    'profile.language': 'Язык', 'profile.editPhoto': 'Изменить фото', 'profile.removePhoto': 'Убрать фото',
+    'profile.statWorkouts': 'Тренировок', 'profile.statGoals': 'Целей', 'profile.statBestStreak': 'Лучший стрик',
+    'profile.roleAdmin': '🛡️ Администратор', 'profile.roleTrainer': '🏋️ Тренер', 'profile.roleUser': '👤 Пользователь',
+    'profile.defaultGoalToast': 'Цель по умолчанию: {goal} {pts}',
+
+    'photo.cropTitle': 'Кадрируйте фото', 'photo.cropHint': 'Перетащите фото и подберите масштаб',
+    'photo.notImage': 'Это не изображение', 'photo.tooBig': 'Файл слишком большой (макс. 10 МБ)',
+    'photo.openFail': 'Не удалось открыть фото', 'photo.processFail': 'Не удалось обработать фото',
+    'photo.updated': 'Фото обновлено', 'photo.uploadFail': 'Ошибка загрузки фото',
+    'photo.removed': 'Фото убрано', 'photo.removeFail': 'Не удалось убрать фото',
+
+    'avatarStyle.adventurer': 'Рисованный', 'avatarStyle.lorelei': 'Лайн-арт', 'avatarStyle.micah': 'Флэт',
+    'avatarStyle.notionists': 'Минимал', 'avatarStyle.pixel-art': 'Пиксель',
+
+    'ex.bike.name': 'Велосипед', 'ex.bike.desc': 'Умеренный темп, улица или велотренажёр',
+    'ex.walk.name': 'Ходьба', 'ex.walk.desc': 'Обычный темп, улица или дорожка',
+    'ex.ell.name': 'Эллипсоид', 'ex.ell.desc': 'Умеренная нагрузка, ровный темп',
+    'ex.step.name': 'Степпер', 'ex.step.desc': 'Тренирует ягодицы, бёдра и икры',
+    'ex.dance.name': 'Танцы (sexy dance)', 'ex.dance.desc': '1 час = ~8 500 б — попадает в цель',
+    'ex.pilates.name': 'Пилатес (дома, мат)', 'ex.pilates.desc': 'Растяжка, укрепление кора, низкая нагрузка',
+  },
+  en: {
+    'common.back': '← Back', 'common.next': 'Next →', 'common.cancel': 'Cancel', 'common.save': 'Save',
+    'unit.min': 'min', 'unit.pts': 'pts', 'unit.kcalMin': 'kcal/min',
+    'unit.hour.one': 'hour', 'unit.hour.few': 'hours', 'unit.hour.many': 'hours', 'unit.hour.other': 'hours',
+    'unit.day.one': 'day', 'unit.day.few': 'days', 'unit.day.many': 'days', 'unit.day.other': 'days',
+    'unit.member.one': 'member', 'unit.member.few': 'members', 'unit.member.many': 'members', 'unit.member.other': 'members',
+
+    'auth.tabRegister': 'New account', 'auth.tabLogin': 'Sign in',
+    'auth.chooseAvatar': 'Choose an avatar', 'auth.avatarPreviewAlt': 'Avatar preview', 'auth.moreVariants': 'More options',
+    'auth.enterNick': 'Choose a nickname', 'auth.nickPlaceholder': 'letters, digits, _',
+    'auth.pinLabel': 'PIN (4–6 digits)', 'auth.pinRepeat': 'Repeat PIN',
+    'auth.chooseRole': 'Choose a role',
+    'auth.roleUser': 'User', 'auth.roleUserDesc': 'Activity tracker, friends, streaks',
+    'auth.roleTrainer': 'Trainer', 'auth.roleTrainerDesc': 'Groups and member dashboard (requires Admin approval)',
+    'auth.createAccount': 'Create account', 'auth.creating': 'Creating…',
+    'auth.loginNick': 'Nickname', 'auth.loginNickPlaceholder': 'your nickname', 'auth.signIn': 'Sign in',
+    'auth.loginHint': 'Use the same nickname and PIN on any device.<br>If the PIN is lost, the account cannot be recovered.',
+    'auth.errNickTaken': 'Check the nickname — it must be available',
+    'auth.errPinShort': 'PIN must be at least 4 digits', 'auth.errPinMismatch': 'PINs do not match',
+    'auth.errChooseAvatar': 'Choose an avatar',
+
+    'waiting.title': 'Application under review',
+    'waiting.text': 'Your trainer account is awaiting Administrator approval.<br>This usually takes up to 24 hours.',
+    'common.signOut': 'Sign out',
+
+    'nav.tracker': 'Tracker', 'nav.history': 'History', 'nav.friends': 'Friends',
+    'nav.groups': 'Groups', 'nav.admin': 'Admin', 'nav.profile': 'Profile',
+
+    'tracker.scoreOf': 'points of', 'tracker.advanced': 'Advanced level', 'tracker.advancedOn': 'Advanced ✓',
+    'tracker.reset': 'Reset', 'tracker.sectionActivity': 'Choose an activity', 'tracker.save': 'Save workout',
+    'tracker.statusEmpty': 'Pick an exercise and set the time', 'tracker.statusStart': 'Good start — keep going!',
+    'tracker.statusHalf': 'More than halfway there!', 'tracker.statusFinal': 'Final push — you’re almost at the goal!',
+    'tracker.statusDone': '🏆 Goal reached! Great work!',
+    'tracker.savedToday': '✅ Today’s workout is already saved — you can edit it',
+    'tracker.saved': '✅ Workout saved!', 'tracker.savedToast': 'Workout saved 💪',
+    'tracker.clearAria': 'Clear', 'tracker.lessAria': 'Less', 'tracker.moreAria': 'More', 'tracker.minutesAria': 'Minutes',
+
+    'streak.record': 'Best', 'streak.daysInRow': 'in a row',
+    'milestone.1': 'First step taken! You’ve begun',
+    'milestone.3': '3 days in a row — the habit is starting to form!',
+    'milestone.7': 'A whole week! Well done, keep it up',
+    'milestone.14': 'Two weeks — that’s real character',
+    'milestone.21': '21 days — scientists say the habit is formed!',
+    'milestone.28': '28 days nonstop — you’re a machine',
+    'milestone.31': 'A full month! An absolute record',
+
+    'history.title': 'Workout history', 'history.emptyTitle': 'No workouts yet', 'history.emptySub': 'Save your first one!',
+    'history.goalDone': '✅ Goal', 'history.goalMissed': '❌ Goal not met', 'history.outOf': 'of',
+
+    'friends.searchPlaceholder': '🔍 Search by nickname...', 'friends.title': 'Friends', 'friends.nobody': 'Nobody found',
+    'friends.add': 'Add', 'friends.requestSent': 'Request sent', 'friends.alreadyFriends': 'Already friends',
+    'friends.accept': 'Accept', 'friends.incoming': 'Incoming requests', 'friends.emptyTitle': 'No friends yet',
+    'friends.emptySub': 'Find them via the search above', 'friends.notTrainedToday': 'Hasn’t trained today yet',
+    'friends.requestSentToast': 'Request sent!', 'friends.nowFriendsToast': 'You’re friends now! 🤝',
+
+    'groups.title': 'My groups', 'groups.create': 'Create', 'groups.emptyTitle': 'No groups yet',
+    'groups.emptySub': 'Create your first one!', 'groups.dashboard': 'Dashboard', 'groups.invite': 'Invite',
+    'groups.promptName': 'Group name:', 'groups.promptDesc': 'Description (optional):',
+    'groups.createdToast': 'Group created!', 'groups.promptInvite': 'Nickname of the user to invite:',
+    'groups.userNotFound': 'User not found', 'groups.invitedToast': '{nick} invited to the group!',
+    'groups.noMembers': 'No members in the group yet', 'groups.fallbackName': 'Group',
+
+    'admin.title': 'Trainer applications', 'admin.empty': 'No applications under review', 'admin.requestFrom': 'Request from',
+    'admin.approve': '✓ Approve', 'admin.reject': '✕ Reject', 'admin.approvedToast': 'Trainer approved!',
+    'admin.promptReject': 'Reason for rejection (optional):', 'admin.rejectedToast': 'Application rejected',
+
+    'profile.statsTitle': 'Statistics', 'profile.settingsTitle': 'Settings', 'profile.defaultGoal': 'Default goal',
+    'profile.language': 'Language', 'profile.editPhoto': 'Change photo', 'profile.removePhoto': 'Remove photo',
+    'profile.statWorkouts': 'Workouts', 'profile.statGoals': 'Goals', 'profile.statBestStreak': 'Best streak',
+    'profile.roleAdmin': '🛡️ Administrator', 'profile.roleTrainer': '🏋️ Trainer', 'profile.roleUser': '👤 User',
+    'profile.defaultGoalToast': 'Default goal: {goal} {pts}',
+
+    'photo.cropTitle': 'Crop the photo', 'photo.cropHint': 'Drag the photo and adjust the zoom',
+    'photo.notImage': 'This is not an image', 'photo.tooBig': 'File is too large (max 10 MB)',
+    'photo.openFail': 'Could not open the photo', 'photo.processFail': 'Could not process the photo',
+    'photo.updated': 'Photo updated', 'photo.uploadFail': 'Photo upload error',
+    'photo.removed': 'Photo removed', 'photo.removeFail': 'Could not remove the photo',
+
+    'avatarStyle.adventurer': 'Drawn', 'avatarStyle.lorelei': 'Line art', 'avatarStyle.micah': 'Flat',
+    'avatarStyle.notionists': 'Minimal', 'avatarStyle.pixel-art': 'Pixel',
+
+    'ex.bike.name': 'Cycling', 'ex.bike.desc': 'Moderate pace, outdoors or stationary bike',
+    'ex.walk.name': 'Walking', 'ex.walk.desc': 'Normal pace, outdoors or treadmill',
+    'ex.ell.name': 'Elliptical', 'ex.ell.desc': 'Moderate load, steady pace',
+    'ex.step.name': 'Stepper', 'ex.step.desc': 'Works glutes, thighs and calves',
+    'ex.dance.name': 'Dance (sexy dance)', 'ex.dance.desc': '1 hour = ~8,500 pts — hits the goal',
+    'ex.pilates.name': 'Pilates (home, mat)', 'ex.pilates.desc': 'Stretching, core strengthening, low load',
+  },
+  pl: {
+    'common.back': '← Wstecz', 'common.next': 'Dalej →', 'common.cancel': 'Anuluj', 'common.save': 'Zapisz',
+    'unit.min': 'min', 'unit.pts': 'pkt', 'unit.kcalMin': 'kcal/min',
+    'unit.hour.one': 'godzina', 'unit.hour.few': 'godziny', 'unit.hour.many': 'godzin', 'unit.hour.other': 'godziny',
+    'unit.day.one': 'dzień', 'unit.day.few': 'dni', 'unit.day.many': 'dni', 'unit.day.other': 'dnia',
+    'unit.member.one': 'uczestnik', 'unit.member.few': 'uczestników', 'unit.member.many': 'uczestników', 'unit.member.other': 'uczestnika',
+
+    'auth.tabRegister': 'Nowe konto', 'auth.tabLogin': 'Zaloguj',
+    'auth.chooseAvatar': 'Wybierz awatar', 'auth.avatarPreviewAlt': 'Podgląd awatara', 'auth.moreVariants': 'Więcej opcji',
+    'auth.enterNick': 'Wybierz pseudonim', 'auth.nickPlaceholder': 'litery, cyfry, _',
+    'auth.pinLabel': 'PIN (4–6 cyfr)', 'auth.pinRepeat': 'Powtórz PIN',
+    'auth.chooseRole': 'Wybierz rolę',
+    'auth.roleUser': 'Użytkownik', 'auth.roleUserDesc': 'Tracker aktywności, znajomi, serie',
+    'auth.roleTrainer': 'Trener', 'auth.roleTrainerDesc': 'Grupy i panel uczestników (wymaga zatwierdzenia przez Administratora)',
+    'auth.createAccount': 'Utwórz konto', 'auth.creating': 'Tworzenie…',
+    'auth.loginNick': 'Pseudonim', 'auth.loginNickPlaceholder': 'twój pseudonim', 'auth.signIn': 'Zaloguj się',
+    'auth.loginHint': 'Użyj tego samego pseudonimu i PIN-u na dowolnym urządzeniu.<br>W razie utraty PIN-u konta nie da się odzyskać.',
+    'auth.errNickTaken': 'Sprawdź pseudonim — musi być wolny',
+    'auth.errPinShort': 'PIN musi mieć co najmniej 4 cyfry', 'auth.errPinMismatch': 'PIN-y nie są zgodne',
+    'auth.errChooseAvatar': 'Wybierz awatar',
+
+    'waiting.title': 'Wniosek w trakcie rozpatrywania',
+    'waiting.text': 'Twoje konto trenera oczekuje na zatwierdzenie przez Administratora.<br>Zwykle trwa to do 24 godzin.',
+    'common.signOut': 'Wyloguj',
+
+    'nav.tracker': 'Tracker', 'nav.history': 'Historia', 'nav.friends': 'Znajomi',
+    'nav.groups': 'Grupy', 'nav.admin': 'Admin', 'nav.profile': 'Profil',
+
+    'tracker.scoreOf': 'punktów z', 'tracker.advanced': 'Poziom zaawansowany', 'tracker.advancedOn': 'Zaawansowany ✓',
+    'tracker.reset': 'Wyczyść', 'tracker.sectionActivity': 'Wybierz aktywność', 'tracker.save': 'Zapisz trening',
+    'tracker.statusEmpty': 'Wybierz ćwiczenie i ustaw czas', 'tracker.statusStart': 'Dobry początek — tak trzymaj!',
+    'tracker.statusHalf': 'Ponad połowa za tobą!', 'tracker.statusFinal': 'Ostatni zryw — jesteś blisko celu!',
+    'tracker.statusDone': '🏆 Cel osiągnięty! Świetna robota!',
+    'tracker.savedToday': '✅ Dzisiejszy trening jest już zapisany — możesz go zmienić',
+    'tracker.saved': '✅ Trening zapisany!', 'tracker.savedToast': 'Trening zapisany 💪',
+    'tracker.clearAria': 'Wyczyść', 'tracker.lessAria': 'Mniej', 'tracker.moreAria': 'Więcej', 'tracker.minutesAria': 'Minuty',
+
+    'streak.record': 'Rekord', 'streak.daysInRow': 'z rzędu',
+    'milestone.1': 'Pierwszy krok zrobiony! Początek za tobą',
+    'milestone.3': '3 dni z rzędu — nawyk zaczyna się tworzyć!',
+    'milestone.7': 'Cały tydzień! Brawo, tak trzymaj',
+    'milestone.14': 'Dwa tygodnie — to już charakter',
+    'milestone.21': '21 dni — naukowcy mówią, że nawyk jest utrwalony!',
+    'milestone.28': '28 dni bez przerwy — jesteś maszyną',
+    'milestone.31': 'Pełny miesiąc! Absolutny rekord',
+
+    'history.title': 'Historia treningów', 'history.emptyTitle': 'Brak treningów', 'history.emptySub': 'Zapisz pierwszy!',
+    'history.goalDone': '✅ Cel', 'history.goalMissed': '❌ Cel niezrealizowany', 'history.outOf': 'z',
+
+    'friends.searchPlaceholder': '🔍 Szukaj po pseudonimie...', 'friends.title': 'Znajomi', 'friends.nobody': 'Nikogo nie znaleziono',
+    'friends.add': 'Dodaj', 'friends.requestSent': 'Wysłano zaproszenie', 'friends.alreadyFriends': 'Już znajomi',
+    'friends.accept': 'Akceptuj', 'friends.incoming': 'Otrzymane zaproszenia', 'friends.emptyTitle': 'Brak znajomych',
+    'friends.emptySub': 'Znajdź ich przez wyszukiwarkę powyżej', 'friends.notTrainedToday': 'Jeszcze nie trenował dzisiaj',
+    'friends.requestSentToast': 'Zaproszenie wysłane!', 'friends.nowFriendsToast': 'Teraz jesteście znajomymi! 🤝',
+
+    'groups.title': 'Moje grupy', 'groups.create': 'Utwórz', 'groups.emptyTitle': 'Brak grup',
+    'groups.emptySub': 'Utwórz pierwszą!', 'groups.dashboard': 'Panel', 'groups.invite': 'Zaproś',
+    'groups.promptName': 'Nazwa grupy:', 'groups.promptDesc': 'Opis (opcjonalnie):',
+    'groups.createdToast': 'Grupa utworzona!', 'groups.promptInvite': 'Pseudonim użytkownika do zaproszenia:',
+    'groups.userNotFound': 'Nie znaleziono użytkownika', 'groups.invitedToast': '{nick} zaproszony do grupy!',
+    'groups.noMembers': 'Brak uczestników w grupie', 'groups.fallbackName': 'Grupa',
+
+    'admin.title': 'Wnioski trenerów', 'admin.empty': 'Brak wniosków do rozpatrzenia', 'admin.requestFrom': 'Wniosek z',
+    'admin.approve': '✓ Zatwierdź', 'admin.reject': '✕ Odrzuć', 'admin.approvedToast': 'Trener zatwierdzony!',
+    'admin.promptReject': 'Powód odrzucenia (opcjonalnie):', 'admin.rejectedToast': 'Wniosek odrzucony',
+
+    'profile.statsTitle': 'Statystyki', 'profile.settingsTitle': 'Ustawienia', 'profile.defaultGoal': 'Cel domyślny',
+    'profile.language': 'Język', 'profile.editPhoto': 'Zmień zdjęcie', 'profile.removePhoto': 'Usuń zdjęcie',
+    'profile.statWorkouts': 'Treningi', 'profile.statGoals': 'Cele', 'profile.statBestStreak': 'Najlepsza seria',
+    'profile.roleAdmin': '🛡️ Administrator', 'profile.roleTrainer': '🏋️ Trener', 'profile.roleUser': '👤 Użytkownik',
+    'profile.defaultGoalToast': 'Cel domyślny: {goal} {pts}',
+
+    'photo.cropTitle': 'Przytnij zdjęcie', 'photo.cropHint': 'Przeciągnij zdjęcie i dobierz powiększenie',
+    'photo.notImage': 'To nie jest obraz', 'photo.tooBig': 'Plik zbyt duży (maks. 10 MB)',
+    'photo.openFail': 'Nie udało się otworzyć zdjęcia', 'photo.processFail': 'Nie udało się przetworzyć zdjęcia',
+    'photo.updated': 'Zdjęcie zaktualizowane', 'photo.uploadFail': 'Błąd przesyłania zdjęcia',
+    'photo.removed': 'Zdjęcie usunięte', 'photo.removeFail': 'Nie udało się usunąć zdjęcia',
+
+    'avatarStyle.adventurer': 'Rysowany', 'avatarStyle.lorelei': 'Liniowy', 'avatarStyle.micah': 'Płaski',
+    'avatarStyle.notionists': 'Minimal', 'avatarStyle.pixel-art': 'Pixel',
+
+    'ex.bike.name': 'Rower', 'ex.bike.desc': 'Umiarkowane tempo, ulica lub rowerek stacjonarny',
+    'ex.walk.name': 'Chód', 'ex.walk.desc': 'Zwykłe tempo, ulica lub bieżnia',
+    'ex.ell.name': 'Orbitrek', 'ex.ell.desc': 'Umiarkowane obciążenie, równe tempo',
+    'ex.step.name': 'Stepper', 'ex.step.desc': 'Trenuje pośladki, uda i łydki',
+    'ex.dance.name': 'Taniec (sexy dance)', 'ex.dance.desc': '1 godzina = ~8 500 pkt — trafia w cel',
+    'ex.pilates.name': 'Pilates (dom, mata)', 'ex.pilates.desc': 'Rozciąganie, wzmacnianie core, niskie obciążenie',
+  },
 };
+
+let currentLang = 'en';
+const _pluralRules = {};
+function pluralCat(n) {
+  const loc = LOCALE[currentLang] || 'en';
+  (_pluralRules[loc] = _pluralRules[loc] || new Intl.PluralRules(loc));
+  return _pluralRules[loc].select(n);
+}
+function t(key, params) {
+  let s = (I18N[currentLang] && I18N[currentLang][key]);
+  if (s == null) s = (I18N.en[key] != null ? I18N.en[key] : key); // fallback to EN, then key
+  if (params) for (const k in params) s = s.replaceAll('{' + k + '}', params[k]);
+  return s;
+}
+function tp(base, n) { // pluralized unit, e.g. tp('unit.day', 5)
+  return t(base + '.' + pluralCat(n));
+}
+function fmtNum(n) { return Number(n).toLocaleString(LOCALE[currentLang] || 'en'); }
+function fmtPts(n) { return fmtNum(n) + ' ' + t('unit.pts'); }
+function fmtDuration(min) {
+  if (min >= 120 && min % 60 === 0) { const h = min / 60; return h + ' ' + tp('unit.hour', h); }
+  return min + ' ' + t('unit.min');
+}
+
+function detectLang() {
+  const cached = localStorage.getItem('at_lang');
+  if (SUPPORTED_LANGS.includes(cached)) return cached;
+  const nav = (navigator.language || navigator.userLanguage || 'en').slice(0, 2).toLowerCase();
+  return SUPPORTED_LANGS.includes(nav) ? nav : 'en';
+}
+
+function applyTranslations(root = document) {
+  root.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n')); });
+  root.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-ph')); });
+  root.querySelectorAll('[data-i18n-alt]').forEach(el => { el.alt = t(el.getAttribute('data-i18n-alt')); });
+  root.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.getAttribute('data-i18n-title')); });
+  document.documentElement.lang = currentLang;
+}
+
+function setLang(lang, opts = {}) {
+  if (!SUPPORTED_LANGS.includes(lang)) return;
+  currentLang = lang;
+  localStorage.setItem('at_lang', lang);
+  applyTranslations();
+  // Re-render dynamic views that are currently built
+  if (typeof rerenderForLang === 'function') rerenderForLang();
+  if (opts.persist && currentProfile && currentUser) {
+    currentProfile.lang = lang;
+    sb.from('profiles').update({ lang }).eq('id', currentUser.id);
+  }
+}
 
 // ================================================================
 // SUPABASE CLIENT
@@ -908,20 +1225,25 @@ let _friendTimer = null;
 let currentTab   = 'tracker';
 
 // Tracker state
+// name/desc come from i18n (t('ex.<id>.name')); meta is rendered from `kcal`;
+// hint labels are computed from `val` via fmtDuration(). Only data lives here.
 const exercises = [
-  { id:'bike',  name:'Велосипед',           desc:'Умеренный темп, улица или велотренажёр', meta:'~7.5 ккал/мин', pts:167, icon:'ti-bike',       iconClass:'green-icon', max:360, step:5,
-    hints:[{label:'30 мин',val:30,pts:5010},{label:'60 мин',val:60,pts:10020},{label:'3 часа',val:180,pts:30060},{label:'6 часов',val:360,pts:60120}] },
-  { id:'walk',  name:'Ходьба',              desc:'Обычный темп, улица или дорожка',          meta:'~3.5 ккал/мин', pts:78,  icon:'ti-walk',       iconClass:'green-icon', max:120, step:5,
-    hints:[{label:'30 мин',val:30,pts:2340},{label:'60 мин',val:60,pts:4680},{label:'90 мин',val:90,pts:7020},{label:'2 часа',val:120,pts:9360}] },
-  { id:'ell',   name:'Эллипсоид',           desc:'Умеренная нагрузка, ровный темп',          meta:'~7 ккал/мин',   pts:156, icon:'ti-ripple',     iconClass:'green-icon', max:75,  step:5,
-    hints:[{label:'20 мин',val:20,pts:3120},{label:'30 мин',val:30,pts:4680},{label:'45 мин',val:45,pts:7020},{label:'75 мин',val:75,pts:11700}] },
-  { id:'step',  name:'Степпер',             desc:'Тренирует ягодицы, бёдра и икры',          meta:'~6.5 ккал/мин', pts:144, icon:'ti-stairs-up',  iconClass:'green-icon', max:75,  step:5,
-    hints:[{label:'20 мин',val:20,pts:2880},{label:'30 мин',val:30,pts:4320},{label:'50 мин',val:50,pts:7200},{label:'75 мин',val:75,pts:10800}] },
-  { id:'dance', name:'Танцы (sexy dance)',  desc:'1 час = ~8 500 б — попадает в цель',       meta:'~6.3 ккал/мин', pts:140, icon:'ti-music',      iconClass:'coral-icon', max:90,  step:5,
-    hints:[{label:'30 мин',val:30,pts:4200},{label:'50 мин',val:50,pts:7000},{label:'60 мин',val:60,pts:8400},{label:'90 мин',val:90,pts:12600}] },
-  { id:'pilates', name:'Пилатес (дома, мат)', desc:'Растяжка, укрепление кора, низкая нагрузка', meta:'~2.9 ккал/мин', pts:66, icon:'ti-yoga',       iconClass:'coral-icon', max:120, step:5,
-    hints:[{label:'30 мин',val:30,pts:1980},{label:'60 мин',val:60,pts:3960},{label:'90 мин',val:90,pts:5940},{label:'2 часа',val:120,pts:7920}] },
+  { id:'bike',  kcal:7.5, pts:167, icon:'ti-bike',      iconClass:'green-icon', max:360, step:5,
+    hints:[{val:30,pts:5010},{val:60,pts:10020},{val:180,pts:30060},{val:360,pts:60120}] },
+  { id:'walk',  kcal:3.5, pts:78,  icon:'ti-walk',      iconClass:'green-icon', max:120, step:5,
+    hints:[{val:30,pts:2340},{val:60,pts:4680},{val:90,pts:7020},{val:120,pts:9360}] },
+  { id:'ell',   kcal:7,   pts:156, icon:'ti-ripple',    iconClass:'green-icon', max:75,  step:5,
+    hints:[{val:20,pts:3120},{val:30,pts:4680},{val:45,pts:7020},{val:75,pts:11700}] },
+  { id:'step',  kcal:6.5, pts:144, icon:'ti-stairs-up', iconClass:'green-icon', max:75,  step:5,
+    hints:[{val:20,pts:2880},{val:30,pts:4320},{val:50,pts:7200},{val:75,pts:10800}] },
+  { id:'dance', kcal:6.3, pts:140, icon:'ti-music',     iconClass:'coral-icon', max:90,  step:5,
+    hints:[{val:30,pts:4200},{val:50,pts:7000},{val:60,pts:8400},{val:90,pts:12600}] },
+  { id:'pilates', kcal:2.9, pts:66, icon:'ti-yoga',     iconClass:'coral-icon', max:120, step:5,
+    hints:[{val:30,pts:1980},{val:60,pts:3960},{val:90,pts:5940},{val:120,pts:7920}] },
 ];
+function exName(e) { return t('ex.' + e.id + '.name'); }
+function exDesc(e) { return t('ex.' + e.id + '.desc'); }
+function exMeta(e) { return '~' + fmtNum(e.kcal) + ' ' + t('unit.kcalMin'); }
 const vals = {};
 exercises.forEach(e => vals[e.id] = 0);
 let goal = 7000;
@@ -960,7 +1282,7 @@ function avatarImg(p, size = 44) {
 }
 function formatDate(d) {
   const dt = new Date(d + 'T12:00:00');
-  return dt.toLocaleDateString('ru', { day: 'numeric', month: 'long', weekday: 'short' });
+  return dt.toLocaleDateString(LOCALE[currentLang] || 'en', { day: 'numeric', month: 'long', weekday: 'short' });
 }
 
 // ================================================================
@@ -1051,7 +1373,7 @@ function buildStyleChips() {
     const chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'style-chip' + (style === selectedAvatarStyle ? ' on' : '');
-    chip.textContent = AVATAR_STYLE_LABELS[style] || style;
+    chip.textContent = t('avatarStyle.' + style);
     chip.onclick = () => selectAvatarStyle(style);
     wrap.appendChild(chip);
   });
@@ -1114,7 +1436,7 @@ async function checkNick(nick) {
 // ---- Step navigation ----
 function goRegStep(step) {
   if (step === 2) {
-    if (!selectedAvatarSeed) { showToast('Выберите аватарку'); return; }
+    if (!selectedAvatarSeed) { showToast(t('auth.errChooseAvatar')); return; }
   }
   if (step === 3) {
     const nick = document.getElementById('reg-nick').value.trim();
@@ -1122,9 +1444,9 @@ function goRegStep(step) {
     const pin2 = document.getElementById('reg-pin2').value;
     const err  = document.getElementById('reg-step2-error');
     err.classList.add('hidden');
-    if (!nickCheckOk) { err.textContent = 'Проверьте ник — он должен быть свободен'; err.classList.remove('hidden'); return; }
-    if (pin.length < 4) { err.textContent = 'PIN должен быть минимум 4 цифры'; err.classList.remove('hidden'); return; }
-    if (pin !== pin2)   { err.textContent = 'PIN не совпадает'; err.classList.remove('hidden'); return; }
+    if (!nickCheckOk) { err.textContent = t('auth.errNickTaken'); err.classList.remove('hidden'); return; }
+    if (pin.length < 4) { err.textContent = t('auth.errPinShort'); err.classList.remove('hidden'); return; }
+    if (pin !== pin2)   { err.textContent = t('auth.errPinMismatch'); err.classList.remove('hidden'); return; }
   }
   document.querySelectorAll('.auth-step').forEach(s => s.classList.add('hidden'));
   document.getElementById('reg-step-' + step).classList.remove('hidden');
@@ -1143,13 +1465,13 @@ async function register() {
   const err  = document.getElementById('reg-step3-error');
   err.classList.add('hidden');
   const btn  = document.getElementById('btn-create');
-  btn.disabled = true; btn.textContent = 'Создаём…';
+  btn.disabled = true; btn.textContent = t('auth.creating');
 
   const email = `${nick}@activitytracker.app`;
   const { data, error } = await sb.auth.signUp({ email, password: padPin(pin) });
   if (error) {
     err.textContent = error.message; err.classList.remove('hidden');
-    btn.disabled = false; btn.textContent = 'Создать аккаунт'; return;
+    btn.disabled = false; btn.textContent = t('auth.createAccount'); return;
   }
 
   const isTrainer = selectedRole === 'trainer';
@@ -1162,6 +1484,7 @@ async function register() {
     is_active:      !isTrainer,
     trainer_status: isTrainer ? 'pending' : null,
     default_goal:   7000,
+    lang:           currentLang,
     created_at:     new Date().toISOString(),
   };
   await sb.from('profiles').insert(profile);
@@ -1219,6 +1542,13 @@ async function afterLogin() {
   }
   if (!currentProfile) { showScreen('screen-auth'); return; } // no profile yet
 
+  // Apply the profile's saved language (overrides the local/auto guess)
+  if (SUPPORTED_LANGS.includes(currentProfile.lang) && currentProfile.lang !== currentLang) {
+    currentLang = currentProfile.lang;
+    localStorage.setItem('at_lang', currentLang);
+    applyTranslations();
+  }
+
   if (!currentProfile.is_active && currentProfile.role === 'trainer') {
     renderWaiting();
     showScreen('screen-waiting');
@@ -1251,7 +1581,7 @@ function applyProfile() {
     const el = document.getElementById('g' + v);
     if (el) el.classList.toggle('on', v === dg);
   });
-  document.getElementById('goalLabel').textContent = goal.toLocaleString('ru');
+  document.getElementById('goalLabel').textContent = fmtNum(goal);
 
   // Role-based nav
   const isTrainer = p.role === 'trainer' && p.is_active;
@@ -1281,32 +1611,32 @@ function buildExCards() {
       <div class="ex-head" onclick="toggleCard('${e.id}')">
         <div class="ex-icon-wrap ${e.iconClass}"><i class="ti ${e.icon}"></i></div>
         <div class="ex-info">
-          <div class="ex-name">${e.name}</div>
-          <div class="ex-desc">${e.desc}</div>
+          <div class="ex-name">${exName(e)}</div>
+          <div class="ex-desc">${exDesc(e)}</div>
         </div>
-        <div class="ex-rate" id="rate-${e.id}">${e.meta}</div>
-        <button type="button" class="ex-clear" aria-label="Очистить"
+        <div class="ex-rate" id="rate-${e.id}">${exMeta(e)}</div>
+        <button type="button" class="ex-clear" aria-label="${t('tracker.clearAria')}"
           onclick="event.stopPropagation(); setVal('${e.id}',0)">×</button>
         <i class="ti ti-chevron-down ex-chevron"></i>
       </div>
       <div class="ex-body">
         <div class="stepper">
-          <button type="button" class="step-btn" id="dec-${e.id}" aria-label="Меньше"
+          <button type="button" class="step-btn" id="dec-${e.id}" aria-label="${t('tracker.lessAria')}"
             onclick="stepVal('${e.id}',-1)">−</button>
           <span class="step-val-wrap">
             <input type="number" class="step-val" id="ro-${e.id}" value="0" min="0" max="${e.max}"
-              inputmode="numeric" aria-label="Минуты — ${e.name}"
+              inputmode="numeric" aria-label="${t('tracker.minutesAria')} — ${exName(e)}"
               oninput="onValInput('${e.id}', this.value)"
               onfocus="this.select()" onblur="onValBlur('${e.id}')">
-            <span class="step-unit">мин</span>
+            <span class="step-unit">${t('unit.min')}</span>
           </span>
-          <button type="button" class="step-btn" id="inc-${e.id}" aria-label="Больше"
+          <button type="button" class="step-btn" id="inc-${e.id}" aria-label="${t('tracker.moreAria')}"
             onclick="stepVal('${e.id}',1)">+</button>
         </div>
         <div class="hints" id="hints-${e.id}">
           ${e.hints.map(h => `
             <div class="hint" data-val="${h.val}" onclick="setVal('${e.id}',${h.val})">
-              <b>${h.label}</b>${h.pts.toLocaleString('ru')} б
+              <b>${fmtDuration(h.val)}</b>${fmtPts(h.pts)}
             </div>`).join('')}
         </div>
       </div>`;
@@ -1346,27 +1676,27 @@ function onValBlur(id) {
 function totalPts() { return exercises.reduce((s, e) => s + vals[e.id] * e.pts, 0); }
 
 function updateTrackerUI() {
-  const t = totalPts();
-  const pct = Math.min(100, (t / goal) * 100);
-  document.getElementById('totalPts').textContent = t.toLocaleString('ru');
+  const total = totalPts();
+  const pct = Math.min(100, (total / goal) * 100);
+  document.getElementById('totalPts').textContent = fmtNum(total);
   document.getElementById('barFill').style.width = pct + '%';
 
   const msgEl = document.getElementById('statusMsg');
   let msg = '';
-  if (t === 0)            msg = 'Выберите упражнение и укажите время';
-  else if (t < goal*.3)   msg = 'Хорошее начало — продолжайте!';
-  else if (t < goal*.65)  msg = 'Больше половины пути!';
-  else if (t < goal)      msg = 'Финальный рывок — вы почти у цели!';
-  else                    msg = '🏆 Цель достигнута! Отличная работа!';
+  if (total === 0)            msg = t('tracker.statusEmpty');
+  else if (total < goal*.3)   msg = t('tracker.statusStart');
+  else if (total < goal*.65)  msg = t('tracker.statusHalf');
+  else if (total < goal)      msg = t('tracker.statusFinal');
+  else                        msg = t('tracker.statusDone');
   msgEl.textContent = msg;
-  msgEl.className = 'status-msg' + (t >= goal ? ' done' : '');
+  msgEl.className = 'status-msg' + (total >= goal ? ' done' : '');
 
   exercises.forEach(e => {
     const v = vals[e.id];
     const earned = v * e.pts;
     const card = document.getElementById('card-' + e.id);
     const rate = document.getElementById('rate-' + e.id);
-    rate.textContent = earned > 0 ? '+' + earned.toLocaleString('ru') + ' б' : e.meta;
+    rate.textContent = earned > 0 ? '+' + fmtPts(earned) : exMeta(e);
     rate.className = 'ex-rate' + (earned > 0 ? ' pos' : '');
     card.classList.toggle('active', v > 0);
     // NOTE: don't auto-expand here — it would re-open cards the user
@@ -1392,10 +1722,10 @@ function updateTrackerUI() {
 function setGoal(baseG) {
   currentBaseGoal = baseG;
   goal = baseG * (advancedMode ? 3 : 1);
-  document.getElementById('goalLabel').textContent = goal.toLocaleString('ru');
+  document.getElementById('goalLabel').textContent = fmtNum(goal);
   BASE_GOALS.forEach(v => {
     document.getElementById('g' + v).className = 'gpill' + (v === baseG ? ' on' : '');
-    document.getElementById('g' + v).textContent = (v * (advancedMode ? 3 : 1)).toLocaleString('ru');
+    document.getElementById('g' + v).textContent = fmtNum(v * (advancedMode ? 3 : 1));
   });
   updateTrackerUI();
 }
@@ -1405,9 +1735,7 @@ function toggleAdvanced() {
   document.body.classList.toggle('advanced', advancedMode);
   const btn = document.getElementById('advBtn');
   btn.classList.toggle('active', advancedMode);
-  btn.innerHTML = advancedMode
-    ? '<i class="ti ti-flame"></i> Продвинутый ✓'
-    : '<i class="ti ti-flame"></i> Продвинутый уровень';
+  btn.innerHTML = '<i class="ti ti-flame"></i> ' + (advancedMode ? t('tracker.advancedOn') : t('tracker.advanced'));
   setGoal(currentBaseGoal);
 }
 
@@ -1448,7 +1776,7 @@ async function loadTodayWorkout() {
     currentBaseGoal = base;
     goal = data.goal;
   }
-  document.getElementById('saveStatus').textContent = '✅ Тренировка уже сохранена сегодня — можно изменить';
+  document.getElementById('saveStatus').textContent = t('tracker.savedToday');
   updateTrackerUI();
 }
 
@@ -1457,7 +1785,7 @@ async function saveWorkout() {
   if (!currentUser) return;
   const btn = document.getElementById('btnSave');
   btn.disabled = true;
-  const t      = totalPts();
+  const total  = totalPts();
   const today  = todayStr();
   const exData = {};
   exercises.forEach(e => { if (vals[e.id] > 0) exData[e.id] = vals[e.id]; });
@@ -1467,9 +1795,9 @@ async function saveWorkout() {
     user_id:       currentUser.id,
     date:          today,
     exercises:     exData,
-    total_points:  t,
+    total_points:  total,
     goal:          goal,
-    goal_achieved: t >= goal,
+    goal_achieved: total >= goal,
     created_at:    new Date().toISOString(),
   };
 
@@ -1478,8 +1806,8 @@ async function saveWorkout() {
   if (workout.goal_achieved) await updateStreak(currentUser.id);
   await renderStreakWidget();
 
-  document.getElementById('saveStatus').textContent = '✅ Тренировка сохранена!';
-  showToast('Тренировка сохранена 💪');
+  document.getElementById('saveStatus').textContent = t('tracker.saved');
+  showToast(t('tracker.savedToast'));
   btn.disabled = false;
 }
 
@@ -1513,9 +1841,8 @@ async function updateStreak(userId) {
 function checkMilestone(n) {
   const monthEnd = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
   const ms = n === monthEnd ? monthEnd : MILESTONES.includes(n) ? n : null;
-  if (ms && MILESTONE_DATA[ms]) {
-    const { medal, msg } = MILESTONE_DATA[ms] || MILESTONE_DATA[31];
-    showToast(`${medal} ${msg}`, 5000);
+  if (ms && MILESTONE_MEDALS[ms]) {
+    showToast(`${MILESTONE_MEDALS[ms]} ${t('milestone.' + ms)}`, 5000);
   }
 }
 
@@ -1530,8 +1857,8 @@ async function renderStreakWidget() {
 
   widget.innerHTML = `
     <div class="streak-top">
-      <span class="streak-main">🔥 ${cur} ${pluralDays(cur)}</span>
-      <span class="streak-record">Рекорд: ${rec} дн.</span>
+      <span class="streak-main">🔥 ${cur} ${tp('unit.day', cur)}</span>
+      <span class="streak-record">${t('streak.record')}: ${rec} ${tp('unit.day', rec)}</span>
     </div>
     <div class="streak-bar-wrap">
       <div class="streak-bar-fill" style="width:${pct}%"></div>
@@ -1541,13 +1868,6 @@ async function renderStreakWidget() {
           <span class="streak-ms-label">${m}</span>
         </div>`).join('')}
     </div>`;
-}
-
-function pluralDays(n) {
-  const mod10 = n % 10, mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return 'день';
-  if ([2,3,4].includes(mod10) && ![12,13,14].includes(mod100)) return 'дня';
-  return 'дней';
 }
 
 // ================================================================
@@ -1560,26 +1880,26 @@ async function loadHistory() {
 
   const container = document.getElementById('historyList');
   if (!workouts || !workouts.length) {
-    container.innerHTML = `<div class="empty-state"><i class="ti ti-calendar-off"></i><p>Тренировок пока нет<br>Сохраните первую!</p></div>`;
+    container.innerHTML = `<div class="empty-state"><i class="ti ti-calendar-off"></i><p>${t('history.emptyTitle')}<br>${t('history.emptySub')}</p></div>`;
     return;
   }
-  const exMap = Object.fromEntries(exercises.map(e => [e.id, e.name]));
+  const exMap = Object.fromEntries(exercises.map(e => [e.id, exName(e)]));
   container.innerHTML = workouts.map(w => {
     const exTags = Object.entries(w.exercises || {})
       .filter(([,v]) => v > 0)
-      .map(([k, v]) => `<span class="history-ex-tag">${exMap[k] || k} ${v} мин</span>`)
+      .map(([k, v]) => `<span class="history-ex-tag">${exMap[k] || k} ${v} ${t('unit.min')}</span>`)
       .join('');
     return `
       <div class="history-card">
         <div class="history-head">
           <span class="history-date">${formatDate(w.date)}</span>
-          <span class="history-pts">${(w.total_points || 0).toLocaleString('ru')} б</span>
+          <span class="history-pts">${fmtPts(w.total_points || 0)}</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
           <span class="history-goal-badge ${w.goal_achieved ? 'achieved' : 'not-achieved'}">
-            ${w.goal_achieved ? '✅ Цель' : '❌ Цель не выполнена'}
+            ${w.goal_achieved ? t('history.goalDone') : t('history.goalMissed')}
           </span>
-          <span style="font-size:12px;color:var(--text3)">из ${(w.goal||0).toLocaleString('ru')} б</span>
+          <span style="font-size:12px;color:var(--text3)">${t('history.outOf')} ${fmtPts(w.goal||0)}</span>
         </div>
         ${exTags ? `<div class="history-exercises">${exTags}</div>` : ''}
       </div>`;
@@ -1602,7 +1922,7 @@ async function searchUsers(query) {
     .ilike('nickname', `%${query}%`).neq('id', currentUser.id).limit(10);
   const container = document.getElementById('searchResults');
   if (!results || !results.length) {
-    container.innerHTML = '<div style="font-size:13px;color:var(--text3);text-align:center;padding:12px">Никого не найдено</div>';
+    container.innerHTML = `<div style="font-size:13px;color:var(--text3);text-align:center;padding:12px">${t('friends.nobody')}</div>`;
     return;
   }
 
@@ -1620,13 +1940,13 @@ async function searchUsers(query) {
     );
     let actionBtn = '';
     if (!fs) {
-      actionBtn = `<button class="btn-sm green" onclick="sendFriendRequest('${u.id}')">Добавить</button>`;
+      actionBtn = `<button class="btn-sm green" onclick="sendFriendRequest('${u.id}')">${t('friends.add')}</button>`;
     } else if (fs.status === 'pending' && fs.requester_id === currentUser.id) {
-      actionBtn = `<button class="btn-sm outline" disabled>Запрос отправлен</button>`;
+      actionBtn = `<button class="btn-sm outline" disabled>${t('friends.requestSent')}</button>`;
     } else if (fs.status === 'pending' && fs.addressee_id === currentUser.id) {
-      actionBtn = `<button class="btn-sm green" onclick="acceptFriend('${fs.id}')">Принять</button>`;
+      actionBtn = `<button class="btn-sm green" onclick="acceptFriend('${fs.id}')">${t('friends.accept')}</button>`;
     } else if (fs.status === 'accepted') {
-      actionBtn = `<button class="btn-sm outline" disabled>Уже друзья</button>`;
+      actionBtn = `<button class="btn-sm outline" disabled>${t('friends.alreadyFriends')}</button>`;
     }
     const roleLabel = u.role === 'trainer' && u.is_active ? ' 🏋️' : '';
     return `
@@ -1646,14 +1966,14 @@ async function sendFriendRequest(addresseeId) {
     id: uid(), requester_id: currentUser.id, addressee_id: addresseeId,
     status: 'pending', created_at: new Date().toISOString(),
   });
-  showToast('Запрос отправлен!');
+  showToast(t('friends.requestSentToast'));
   const q = document.getElementById('friendSearch').value;
   if (q) searchUsers(q);
 }
 
 async function acceptFriend(friendshipId) {
   await sb.from('friendships').update({ status: 'accepted' }).eq('id', friendshipId);
-  showToast('Теперь вы друзья! 🤝');
+  showToast(t('friends.nowFriendsToast'));
   loadFriends();
 }
 
@@ -1679,7 +1999,7 @@ async function loadFriends() {
     const { data: requesters } = await sb.from('profiles').select('*').in('id', ids);
     const pMap = Object.fromEntries((requesters || []).map(p => [p.id, p]));
     reqContainer.innerHTML = `
-      <div class="section-title">Входящие запросы (${incoming.length})</div>
+      <div class="section-title">${t('friends.incoming')} (${incoming.length})</div>
       ${incoming.map(f => {
         const u = pMap[f.requester_id] || {};
         return `
@@ -1709,7 +2029,7 @@ async function loadFriends() {
 
   const container = document.getElementById('friendsList');
   if (!friendIds.length) {
-    container.innerHTML = `<div class="empty-state"><i class="ti ti-user-off"></i><p>Друзей пока нет<br>Найдите их через поиск выше</p></div>`;
+    container.innerHTML = `<div class="empty-state"><i class="ti ti-user-off"></i><p>${t('friends.emptyTitle')}<br>${t('friends.emptySub')}</p></div>`;
     return;
   }
 
@@ -1747,15 +2067,15 @@ async function loadFriends() {
           <div class="user-card-avatar">${avatarImg(fp)}</div>
           <div style="flex:1">
             <div class="user-card-nick">${fp.nickname}</div>
-            <div class="friend-streak">🔥 ${streak?.current_streak || 0} дн. подряд</div>
+            <div class="friend-streak">🔥 ${streak?.current_streak || 0} ${tp('unit.day', streak?.current_streak || 0)} ${t('streak.daysInRow')}</div>
           </div>
-          <div class="friend-pts">${fw ? pts.toLocaleString('ru') + ' б' : '—'}</div>
+          <div class="friend-pts">${fw ? fmtPts(pts) : '—'}</div>
           ${done ? '<span style="font-size:18px">✅</span>' : ''}
         </div>
         ${fw ? `
           <div class="friend-bar-wrap"><div class="friend-bar-fill" style="width:${pct}%"></div></div>
-          <div style="font-size:11px;color:var(--text3)">${pts.toLocaleString('ru')} из ${fgoal.toLocaleString('ru')} б</div>
-        ` : '<div style="font-size:13px;color:var(--text3)">Ещё не тренировался сегодня</div>'}
+          <div style="font-size:11px;color:var(--text3)">${fmtNum(pts)} ${t('history.outOf')} ${fmtPts(fgoal)}</div>
+        ` : `<div style="font-size:13px;color:var(--text3)">${t('friends.notTrainedToday')}</div>`}
       </div>`;
   }).join('');
 }
@@ -1768,7 +2088,7 @@ async function loadGroups() {
   const { data: groups } = await sb.from('groups').select('*').eq('trainer_id', currentUser.id);
   const container = document.getElementById('groupsList');
   if (!groups || !groups.length) {
-    container.innerHTML = `<div class="empty-state"><i class="ti ti-users-group"></i><p>Групп пока нет<br>Создайте первую!</p></div>`;
+    container.innerHTML = `<div class="empty-state"><i class="ti ti-users-group"></i><p>${t('groups.emptyTitle')}<br>${t('groups.emptySub')}</p></div>`;
     return;
   }
   const groupMemberCounts = {};
@@ -1780,18 +2100,18 @@ async function loadGroups() {
   container.innerHTML = groups.map(g => `
     <div class="group-card">
       <div class="group-name">${g.name}</div>
-      <div class="group-meta">${groupMemberCounts[g.id]} участников · ${g.description || ''}</div>
+      <div class="group-meta">${groupMemberCounts[g.id]} ${tp('unit.member', groupMemberCounts[g.id])} · ${g.description || ''}</div>
       <div style="margin-top:10px;display:flex;gap:8px">
-        <button class="btn-sm outline" onclick="openGroupDashboard('${g.id}')">Дашборд</button>
-        <button class="btn-sm green" onclick="showInviteModal('${g.id}')">Пригласить</button>
+        <button class="btn-sm outline" onclick="openGroupDashboard('${g.id}')">${t('groups.dashboard')}</button>
+        <button class="btn-sm green" onclick="showInviteModal('${g.id}')">${t('groups.invite')}</button>
       </div>
     </div>`).join('');
 }
 
 function showCreateGroupModal() {
-  const name = prompt('Название группы:');
+  const name = prompt(t('groups.promptName'));
   if (!name) return;
-  const desc = prompt('Описание (необязательно):') || '';
+  const desc = prompt(t('groups.promptDesc')) || '';
   createGroup(name.trim(), desc.trim());
 }
 
@@ -1801,37 +2121,37 @@ async function createGroup(name, desc) {
     id: uid(), trainer_id: currentUser.id,
     name, description: desc, created_at: new Date().toISOString(),
   });
-  showToast('Группа создана!');
+  showToast(t('groups.createdToast'));
   loadGroups();
 }
 
 async function showInviteModal(groupId) {
-  const nick = prompt('Ник пользователя для приглашения:');
+  const nick = prompt(t('groups.promptInvite'));
   if (!nick) return;
   const { data: profile } = await sb.from('profiles').select('*').eq('nickname', nick.trim()).maybeSingle();
-  if (!profile) { showToast('Пользователь не найден'); return; }
+  if (!profile) { showToast(t('groups.userNotFound')); return; }
   await sb.from('group_members').insert({
     id: uid(), group_id: groupId, user_id: profile.id,
     status: 'invited', joined_at: new Date().toISOString(),
   });
-  showToast(`${nick} приглашён в группу!`);
+  showToast(t('groups.invitedToast', { nick }));
 }
 
 async function openGroupDashboard(groupId) {
   const { data: group } = await sb.from('groups').select('*').eq('id', groupId).maybeSingle();
   const { data: members } = await sb.from('group_members').select('*')
     .eq('group_id', groupId).eq('status', 'accepted');
-  if (!members?.length) { showToast('В группе пока нет участников'); return; }
+  if (!members?.length) { showToast(t('groups.noMembers')); return; }
   const ids = members.map(m => m.user_id);
   const { data: profiles } = await sb.from('profiles').select('*').in('id', ids);
   const today = todayStr();
-  let html = `<b>${group?.name || 'Группа'}</b><br><br>`;
+  let html = `<b>${group?.name || t('groups.fallbackName')}</b><br><br>`;
   for (const p of (profiles || [])) {
     const { data: fw } = await sb.from('workouts').select('*').eq('user_id', p.id).eq('date', today).maybeSingle();
     const { data: streak } = await sb.from('streaks').select('*').eq('user_id', p.id).maybeSingle();
     const pts = fw?.total_points || 0;
     const done = fw?.goal_achieved;
-    html += `${done ? '✅' : '⬜'} ${p.nickname}: ${pts.toLocaleString('ru')} б | 🔥${streak?.current_streak || 0}\n`;
+    html += `${done ? '✅' : '⬜'} ${p.nickname}: ${fmtPts(pts)} | 🔥${streak?.current_streak || 0}\n`;
   }
   alert(html);
 }
@@ -1844,26 +2164,26 @@ async function loadApprovals() {
   const { data: approvals } = await sb.from('trainer_approvals').select('*').eq('status', 'pending');
   const container = document.getElementById('approvalsList');
   if (!approvals || !approvals.length) {
-    container.innerHTML = `<div class="empty-state"><i class="ti ti-check"></i><p>Нет заявок на рассмотрении</p></div>`;
+    container.innerHTML = `<div class="empty-state"><i class="ti ti-check"></i><p>${t('admin.empty')}</p></div>`;
     return;
   }
   const ids = approvals.map(a => a.trainer_id);
   const { data: trainers } = await sb.from('profiles').select('*').in('id', ids);
-  const tMap = Object.fromEntries((trainers || []).map(t => [t.id, t]));
+  const tMap = Object.fromEntries((trainers || []).map(tr => [tr.id, tr]));
   container.innerHTML = approvals.map(a => {
-    const t = tMap[a.trainer_id] || {};
+    const tr = tMap[a.trainer_id] || {};
     return `
       <div class="approval-card">
         <div style="display:flex;align-items:center;gap:12px">
-          <div class="user-card-avatar">${avatarImg(t)}</div>
+          <div class="user-card-avatar">${avatarImg(tr)}</div>
           <div>
-            <div class="user-card-nick">${t.nickname || '?'}</div>
-            <div style="font-size:12px;color:var(--text3)">Заявка от ${new Date(a.created_at).toLocaleDateString('ru')}</div>
+            <div class="user-card-nick">${tr.nickname || '?'}</div>
+            <div style="font-size:12px;color:var(--text3)">${t('admin.requestFrom')} ${new Date(a.created_at).toLocaleDateString(LOCALE[currentLang] || 'en')}</div>
           </div>
         </div>
         <div class="approval-actions">
-          <button class="btn-sm green" onclick="approveTrainer('${a.id}','${a.trainer_id}')">✓ Подтвердить</button>
-          <button class="btn-sm red" onclick="rejectTrainer('${a.id}','${a.trainer_id}')">✕ Отклонить</button>
+          <button class="btn-sm green" onclick="approveTrainer('${a.id}','${a.trainer_id}')">${t('admin.approve')}</button>
+          <button class="btn-sm red" onclick="rejectTrainer('${a.id}','${a.trainer_id}')">${t('admin.reject')}</button>
         </div>
       </div>`;
   }).join('');
@@ -1874,17 +2194,17 @@ async function approveTrainer(approvalId, trainerId) {
   await sb.from('trainer_approvals').update({
     status: 'approved', reviewed_by: currentUser.id,
   }).eq('id', approvalId);
-  showToast('Тренер подтверждён!');
+  showToast(t('admin.approvedToast'));
   loadApprovals();
 }
 
 async function rejectTrainer(approvalId, trainerId) {
-  const note = prompt('Причина отказа (необязательно):') || '';
+  const note = prompt(t('admin.promptReject')) || '';
   await sb.from('profiles').update({ trainer_status: 'rejected' }).eq('id', trainerId);
   await sb.from('trainer_approvals').update({
     status: 'rejected', reviewed_by: currentUser.id, admin_note: note,
   }).eq('id', approvalId);
-  showToast('Заявка отклонена');
+  showToast(t('admin.rejectedToast'));
   loadApprovals();
 }
 
@@ -1899,16 +2219,16 @@ async function renderProfile() {
     <div class="profile-avatar-wrap">
       <img src="${avatarSrc(p)}" class="avatar-img" style="width:80px;height:80px;border-radius:50%;display:block"
         onerror="this.onerror=null;this.src='${avatarUrl(p.avatar_seed, p.avatar_style)}'">
-      <div class="avatar-cam-badge" title="Изменить фото"
+      <div class="avatar-cam-badge" title="${t('profile.editPhoto')}"
         onclick="document.getElementById('avatarFileInput').click()"><i class="ti ti-camera"></i></div>
     </div>`;
   document.getElementById('avatarRemoveRow').innerHTML = p.avatar_url
-    ? `<button class="avatar-remove-btn" onclick="removeAvatar()"><i class="ti ti-trash"></i> Убрать фото</button>`
+    ? `<button class="avatar-remove-btn" onclick="removeAvatar()"><i class="ti ti-trash"></i> ${t('profile.removePhoto')}</button>`
     : '';
   document.getElementById('profileNick').textContent = p.nickname;
   document.getElementById('profileRole').textContent =
-    p.role === 'admin' ? '🛡️ Администратор' :
-    p.role === 'trainer' ? '🏋️ Тренер' : '👤 Пользователь';
+    p.role === 'admin' ? t('profile.roleAdmin') :
+    p.role === 'trainer' ? t('profile.roleTrainer') : t('profile.roleUser');
 
   // Stats
   const { data: workouts } = await sb.from('workouts').select('*').eq('user_id', currentUser.id);
@@ -1921,19 +2241,27 @@ async function renderProfile() {
     Object.entries(w.exercises || {}).forEach(([k, v]) => { exCounts[k] = (exCounts[k] || 0) + v; });
   });
   const favEx = Object.entries(exCounts).sort((a, b) => b[1] - a[1])[0];
-  const favName = favEx ? (exercises.find(e => e.id === favEx[0])?.name || favEx[0]) : '—';
+  const favName = favEx ? (exercises.find(e => e.id === favEx[0]) ? exName(exercises.find(e => e.id === favEx[0])) : favEx[0]) : '—';
 
   document.getElementById('profileStats').innerHTML = `
-    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Тренировок</div></div>
-    <div class="stat-card"><div class="stat-num">${goals}</div><div class="stat-label">Целей</div></div>
-    <div class="stat-card"><div class="stat-num">${bestStr}</div><div class="stat-label">Лучший стрик</div></div>`;
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">${t('profile.statWorkouts')}</div></div>
+    <div class="stat-card"><div class="stat-num">${goals}</div><div class="stat-label">${t('profile.statGoals')}</div></div>
+    <div class="stat-card"><div class="stat-num">${bestStr}</div><div class="stat-label">${t('profile.statBestStreak')}</div></div>`;
 
   // Default goal pills
   const dg = p.default_goal || 7000;
   BASE_GOALS.forEach(v => {
     const el = document.getElementById('pg' + v);
-    if (el) el.classList.toggle('on', v === dg);
+    if (el) { el.textContent = fmtNum(v); el.classList.toggle('on', v === dg); }
   });
+
+  // Language chips
+  const langWrap = document.getElementById('profileLangChips');
+  if (langWrap) {
+    langWrap.innerHTML = SUPPORTED_LANGS.map(l =>
+      `<button class="gpill ${l === currentLang ? 'on' : ''}" onclick="setLang('${l}', {persist:true})">${LANG_NAMES[l]}</button>`
+    ).join('');
+  }
 }
 
 async function setDefaultGoal(val) {
@@ -1944,7 +2272,7 @@ async function setDefaultGoal(val) {
     const el = document.getElementById('pg' + v);
     if (el) el.classList.toggle('on', v === val);
   });
-  showToast(`Цель по умолчанию: ${val.toLocaleString('ru')} б`);
+  showToast(t('profile.defaultGoalToast', { goal: fmtNum(val), pts: t('unit.pts') }));
 }
 
 // ================================================================
@@ -1958,8 +2286,8 @@ function onAvatarFile(input) {
   const file = input.files && input.files[0];
   input.value = ''; // allow re-selecting the same file later
   if (!file) return;
-  if (!file.type.startsWith('image/')) { showToast('Это не изображение'); return; }
-  if (file.size > AVATAR_MAX_INPUT) { showToast('Файл слишком большой (макс. 10 МБ)'); return; }
+  if (!file.type.startsWith('image/')) { showToast(t('photo.notImage')); return; }
+  if (file.size > AVATAR_MAX_INPUT) { showToast(t('photo.tooBig')); return; }
   openCropper(file);
 }
 
@@ -1977,7 +2305,7 @@ function openCropper(file) {
     document.getElementById('cropZoom').value = 1;
     setCropZoom(1, true);              // also centers
   };
-  img.onerror = () => { showToast('Не удалось открыть фото'); cleanupCrop(); };
+  img.onerror = () => { showToast(t('photo.openFail')); cleanupCrop(); };
   img.src = _crop.objUrl;
   document.getElementById('cropImg').src = _crop.objUrl;
 }
@@ -2073,12 +2401,12 @@ async function confirmCrop() {
     // JPEG is the most reliable canvas encoder across browsers (WebP returns
     // black frames on some Android/iOS GPU paths).
     const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
-    if (!blob || blob.size < 1024) { showToast('Не удалось обработать фото'); return; }
+    if (!blob || blob.size < 1024) { showToast(t('photo.processFail')); return; }
     document.getElementById('cropModal').classList.add('hidden');
     await uploadAvatarBlob(blob);
   } catch (err) {
     console.error(err);
-    showToast('Не удалось обработать фото');
+    showToast(t('photo.processFail'));
   } finally {
     okBtn.disabled = false;
     cleanupCrop();
@@ -2113,10 +2441,10 @@ async function uploadAvatarBlob(blob) {
     currentProfile.avatar_url = url;
     renderProfile();
     renderAppHeaderAvatar();
-    showToast('Фото обновлено');
+    showToast(t('photo.updated'));
   } catch (err) {
     console.error(err);
-    showToast('Ошибка загрузки фото');
+    showToast(t('photo.uploadFail'));
   } finally {
     setAvatarLoading(false);
   }
@@ -2133,10 +2461,10 @@ async function removeAvatar() {
     currentProfile.avatar_url = null;
     renderProfile();
     renderAppHeaderAvatar();
-    showToast('Фото убрано');
+    showToast(t('photo.removed'));
   } catch (err) {
     console.error(err);
-    showToast('Не удалось убрать фото');
+    showToast(t('photo.removeFail'));
   } finally {
     setAvatarLoading(false);
   }
@@ -2147,10 +2475,38 @@ function renderAppHeaderAvatar() {
   if (ha && currentProfile) ha.innerHTML = avatarImg(currentProfile, 36);
 }
 
+// Re-render dynamic (JS-built) views after a language change. Static HTML is
+// handled by applyTranslations(); this covers content built in templates.
+function rerenderForLang() {
+  // Tracker: advanced button label + goal pills + status are refreshed via setGoal/updateTrackerUI
+  if (document.getElementById('advBtn')) {
+    document.getElementById('advBtn').innerHTML =
+      '<i class="ti ti-flame"></i> ' + (advancedMode ? t('tracker.advancedOn') : t('tracker.advanced'));
+  }
+  // Rebuild exercise cards (names/desc/meta/hints are baked into the markup)
+  const exC = document.getElementById('exCards');
+  if (exC && exC.children.length) { exC.innerHTML = ''; buildExCards(); }
+  if (typeof updateTrackerUI === 'function' && document.getElementById('totalPts')) {
+    setGoal(currentBaseGoal); // refreshes pills + goal label + status text
+  }
+  renderStreakWidget();
+  // Re-render whichever secondary tab is open
+  if (currentTab === 'history')  loadHistory();
+  if (currentTab === 'friends')  loadFriends();
+  if (currentTab === 'groups')   loadGroups();
+  if (currentTab === 'admin')    loadApprovals();
+  if (currentTab === 'profile')  renderProfile();
+  // Auth screen avatar style chips
+  if (document.getElementById('avatarStyleChips') &&
+      !document.getElementById('screen-auth').classList.contains('hidden')) buildStyleChips();
+}
+
 // ================================================================
 // INIT
 // ================================================================
 async function init() {
+  currentLang = detectLang();
+  applyTranslations();
   buildAvatarGrid();
 
   const loadStart = Date.now();
