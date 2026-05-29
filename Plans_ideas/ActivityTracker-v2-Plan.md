@@ -38,7 +38,8 @@ Supabase Auth используется со схемой `nickname@activitytrack
 | `id` | uuid PK | = `auth.uid()` |
 | `nickname` | text unique | выбирается при онбординге |
 | `avatar_seed` | text | seed для генерации аватарки (DiceBear) |
-| `avatar_animal` | text | тип зверушки (cat / dog / fox / bear / rabbit / ...) |
+| `avatar_style` | text | стиль DiceBear (adventurer / lorelei / ...) |
+| `avatar_url` | text | URL кастомного фото в Storage (если задан — имеет приоритет над DiceBear) |
 | `role` | enum | `user` / `trainer` / `admin` |
 | `is_active` | bool | false у тренера до подтверждения Админа |
 | `trainer_status` | enum | `pending` / `approved` / `rejected` / null |
@@ -413,9 +414,60 @@ activity-tracker-v2/          ← новый GitHub репозиторий
   └── Заявки тренеров → подтвердить / отклонить + заметка
 
 [ Профиль ]
-  ├── Аватарка + ник
+  ├── Аватарка + ник (📷 бейдж → загрузка своего фото, кадратор, «Убрать фото»)
   ├── Статистика (всего тренировок, лучший стрик, любимая активность)
   └── Кнопка «Выйти» → sb.auth.signOut()
+
+---
+
+## Кастомные аватарки (фото) — реализовано
+
+Пользователь может загрузить своё фото в Профиле (с компа или телефона — камера/галерея).
+
+**Клиент (`index.html`):**
+- `<input type="file" accept="image/*">` → валидация (только изображение, ≤ 10 МБ).
+- Интерактивный **кадратор** (модалка, без сторонних либ): круглое окно 280px, перетаскивание (pointer events) + слайдер зума. Что попало в окно — то и сохраняется.
+- Экспорт через `<canvas>`: квадрат **512×512**, WebP q0.85 (JPEG-фолбэк). Итог ~30–80 КБ.
+- Загрузка в Storage `avatars/{user_id}.webp` с `upsert:true`; URL + `?v={timestamp}` (cache-busting) → `profiles.avatar_url`.
+- Хелперы `avatarSrc(p)` / `avatarImg(p, size)`: `avatar_url || DiceBear`. «Убрать фото» → удаляет файл и обнуляет `avatar_url` (возврат к DiceBear).
+
+**Supabase (ручная настройка — см. ниже):**
+- Бакет `avatars` (public read), лимит размера файла.
+- Storage-политики: пользователь пишет/удаляет только `{своего user_id}.*`.
+- `ALTER TABLE profiles ADD COLUMN avatar_url text;`
+
+### SQL для настройки Storage
+```sql
+-- 1) колонка
+alter table profiles add column if not exists avatar_url text;
+
+-- 2) бакет (или создать через UI: Storage → New bucket → name=avatars, Public ✓)
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('avatars', 'avatars', true, 5242880)
+on conflict (id) do update set public = true, file_size_limit = 5242880;
+
+-- 3) политики: путь к файлу = "{uid}.ext", владелец = auth.uid()
+create policy "avatars_public_read" on storage.objects
+  for select using (bucket_id = 'avatars');
+
+create policy "avatars_owner_write" on storage.objects
+  for insert with check (
+    bucket_id = 'avatars'
+    and split_part(name, '.', 1) = auth.uid()::text
+  );
+
+create policy "avatars_owner_update" on storage.objects
+  for update using (
+    bucket_id = 'avatars'
+    and split_part(name, '.', 1) = auth.uid()::text
+  );
+
+create policy "avatars_owner_delete" on storage.objects
+  for delete using (
+    bucket_id = 'avatars'
+    and split_part(name, '.', 1) = auth.uid()::text
+  );
+```
 ```
 
 ---

@@ -386,6 +386,57 @@ body {
 .setting-row span { font-size: 14px; font-weight: 500; }
 .goal-pills.small .gpill { font-size: 11px; padding: 4px 8px; }
 
+/* === AVATAR UPLOAD === */
+.profile-avatar-wrap { position: relative; width: 80px; height: 80px; margin: 0 auto 12px; }
+.profile-avatar-wrap .avatar-img { margin: 0 !important; }
+img.avatar-img, .user-card-avatar img, .friend-head img { object-fit: cover; }
+.avatar-cam-badge {
+  position: absolute; right: -2px; bottom: -2px; width: 30px; height: 30px;
+  border-radius: 50%; background: var(--green); color: #fff; border: 2px solid var(--surface);
+  display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: transform .1s;
+}
+.avatar-cam-badge:active { transform: scale(.9); }
+.avatar-loading {
+  position: absolute; inset: 0; border-radius: 50%; background: rgba(0,0,0,.45);
+  display: flex; align-items: center; justify-content: center;
+}
+.avatar-loading .spinner-sm {
+  width: 22px; height: 22px; border: 3px solid rgba(255,255,255,.4);
+  border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite;
+}
+.avatar-remove-btn {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text3);
+  background: none; border: none; cursor: pointer; padding: 4px 8px; margin-bottom: 6px;
+}
+.avatar-remove-btn:hover { color: var(--red); }
+
+/* === MODAL + CROPPER === */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,.55);
+  display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn .2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-box {
+  background: var(--surface); border-radius: var(--radius); padding: 20px;
+  width: 100%; max-width: 360px; box-shadow: 0 12px 40px rgba(0,0,0,.3);
+}
+.modal-title { font-size: 16px; font-weight: 600; margin-bottom: 14px; text-align: center; }
+.crop-viewport {
+  position: relative; width: 280px; height: 280px; max-width: 72vw; max-height: 72vw;
+  margin: 0 auto; overflow: hidden; border-radius: 50%; background: var(--surface2);
+  touch-action: none; cursor: grab; -webkit-user-select: none; user-select: none;
+}
+.crop-viewport:active { cursor: grabbing; }
+.crop-viewport img { position: absolute; top: 0; left: 0; transform-origin: 0 0; pointer-events: none; -webkit-user-drag: none; }
+.crop-hint { text-align: center; font-size: 12px; color: var(--text3); margin: 12px 0 4px; }
+.crop-zoom { width: 100%; margin: 2px 0 16px; accent-color: var(--green); }
+.modal-actions { display: flex; gap: 10px; }
+.modal-actions button { flex: 1; padding: 12px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; border: none; }
+.btn-modal-cancel { background: var(--surface2); color: var(--text2); }
+.btn-modal-ok { background: var(--green); color: #fff; }
+.btn-modal-ok:disabled { opacity: .6; cursor: wait; }
+
 /* === GROUPS === */
 .group-card {
   background: var(--surface); border: 1px solid var(--border);
@@ -720,6 +771,8 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
       <div id="tab-profile" class="tab hidden">
         <div class="profile-header">
           <div id="profileAvatar"></div>
+          <input type="file" id="avatarFileInput" accept="image/*" hidden onchange="onAvatarFile(this)">
+          <div id="avatarRemoveRow"></div>
           <div id="profileNick" class="profile-nick"></div>
           <div id="profileRole" class="profile-role"></div>
         </div>
@@ -769,6 +822,23 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
   </div><!-- /screen-app -->
 
 </div><!-- /app -->
+
+<!-- Avatar crop modal -->
+<div id="cropModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-title">Кадрируйте фото</div>
+    <div class="crop-viewport" id="cropViewport">
+      <img id="cropImg" alt="">
+    </div>
+    <div class="crop-hint">Перетащите фото и подберите масштаб</div>
+    <input type="range" id="cropZoom" class="crop-zoom" min="1" max="4" step="0.01" value="1"
+      oninput="onCropZoom(this.value)">
+    <div class="modal-actions">
+      <button type="button" class="btn-modal-cancel" onclick="cancelCrop()">Отмена</button>
+      <button type="button" class="btn-modal-ok" id="cropOkBtn" onclick="confirmCrop()">Сохранить</button>
+    </div>
+  </div>
+</div>
 
 <!-- Supabase SDK — раскомментировать в Фазе 2 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -857,8 +927,12 @@ function yesterdayStr() {
 function avatarUrl(seed, style) {
   return `${DICEBEAR_BASE}/${style || 'adventurer'}/svg?seed=${encodeURIComponent(seed)}&radius=50`;
 }
-function avatarImg(seed, style, size = 44) {
-  return `<img src="${avatarUrl(seed, style)}" width="${size}" height="${size}" alt="avatar">`;
+// Prefer a custom uploaded photo; fall back to the generated DiceBear avatar.
+function avatarSrc(p) {
+  return (p && p.avatar_url) ? p.avatar_url : avatarUrl(p?.avatar_seed, p?.avatar_style);
+}
+function avatarImg(p, size = 44) {
+  return `<img class="avatar-img" src="${avatarSrc(p)}" width="${size}" height="${size}" alt="avatar">`;
 }
 function formatDate(d) {
   const dt = new Date(d + 'T12:00:00');
@@ -1104,7 +1178,7 @@ function applyProfile() {
   const p = currentProfile;
   // Header avatar
   const ha = document.getElementById('headerAvatar');
-  ha.innerHTML = avatarImg(p.avatar_seed, p.avatar_style, 36);
+  ha.innerHTML = avatarImg(p, 36);
 
   // Default goal
   const dg = p.default_goal || 7000;
@@ -1126,7 +1200,7 @@ function applyProfile() {
 function renderWaiting() {
   const p = currentProfile;
   document.getElementById('waitingAvatar').innerHTML =
-    `<img src="${avatarUrl(p.avatar_seed, p.avatar_style)}" style="width:80px;height:80px;border-radius:50%;margin:0 auto 16px;display:block">`;
+    `<img class="avatar-img" src="${avatarSrc(p)}" style="width:80px;height:80px;border-radius:50%;margin:0 auto 16px;display:block">`;
 }
 
 // ================================================================
@@ -1493,7 +1567,7 @@ async function searchUsers(query) {
     const roleLabel = u.role === 'trainer' && u.is_active ? ' 🏋️' : '';
     return `
       <div class="user-card">
-        <div class="user-card-avatar">${avatarImg(u.avatar_seed, u.avatar_style)}</div>
+        <div class="user-card-avatar">${avatarImg(u)}</div>
         <div class="user-card-info">
           <div class="user-card-nick">${u.nickname}${roleLabel}</div>
         </div>
@@ -1546,7 +1620,7 @@ async function loadFriends() {
         const u = pMap[f.requester_id] || {};
         return `
           <div class="user-card">
-            <div class="user-card-avatar">${avatarImg(u.avatar_seed, u.avatar_style)}</div>
+            <div class="user-card-avatar">${avatarImg(u)}</div>
             <div class="user-card-info"><div class="user-card-nick">${u.nickname || '?'}</div></div>
             <div style="display:flex;gap:6px">
               <button class="btn-sm green" onclick="acceptFriend('${f.id}')">✓</button>
@@ -1606,7 +1680,7 @@ async function loadFriends() {
     return `
       <div class="friend-card ${done ? 'goal-done' : ''}">
         <div class="friend-head">
-          <div class="user-card-avatar">${avatarImg(fp.avatar_seed, fp.avatar_style)}</div>
+          <div class="user-card-avatar">${avatarImg(fp)}</div>
           <div style="flex:1">
             <div class="user-card-nick">${fp.nickname}</div>
             <div class="friend-streak">🔥 ${streak?.current_streak || 0} дн. подряд</div>
@@ -1717,7 +1791,7 @@ async function loadApprovals() {
     return `
       <div class="approval-card">
         <div style="display:flex;align-items:center;gap:12px">
-          <div class="user-card-avatar">${avatarImg(t.avatar_seed, t.avatar_style)}</div>
+          <div class="user-card-avatar">${avatarImg(t)}</div>
           <div>
             <div class="user-card-nick">${t.nickname || '?'}</div>
             <div style="font-size:12px;color:var(--text3)">Заявка от ${new Date(a.created_at).toLocaleDateString('ru')}</div>
@@ -1757,8 +1831,15 @@ async function renderProfile() {
   if (!currentProfile) return;
   const p = currentProfile;
 
-  document.getElementById('profileAvatar').innerHTML =
-    `<img src="${avatarUrl(p.avatar_seed, p.avatar_style)}" class="avatar-img" style="width:80px;height:80px;border-radius:50%;margin:0 auto 12px;display:block">`;
+  document.getElementById('profileAvatar').innerHTML = `
+    <div class="profile-avatar-wrap">
+      <img src="${avatarSrc(p)}" class="avatar-img" style="width:80px;height:80px;border-radius:50%;display:block">
+      <div class="avatar-cam-badge" title="Изменить фото"
+        onclick="document.getElementById('avatarFileInput').click()"><i class="ti ti-camera"></i></div>
+    </div>`;
+  document.getElementById('avatarRemoveRow').innerHTML = p.avatar_url
+    ? `<button class="avatar-remove-btn" onclick="removeAvatar()"><i class="ti ti-trash"></i> Убрать фото</button>`
+    : '';
   document.getElementById('profileNick').textContent = p.nickname;
   document.getElementById('profileRole').textContent =
     p.role === 'admin' ? '🛡️ Администратор' :
@@ -1799,6 +1880,193 @@ async function setDefaultGoal(val) {
     if (el) el.classList.toggle('on', v === val);
   });
   showToast(`Цель по умолчанию: ${val.toLocaleString('ru')} б`);
+}
+
+// ================================================================
+// AVATAR PHOTO UPLOAD
+// ================================================================
+const AVATAR_OUT_SIZE = 512;          // exported square side, px
+const AVATAR_MAX_INPUT = 10 * 1024 * 1024; // reject inputs over 10 MB
+const _crop = { img: null, vp: 0, rw: 0, rh: 0, x: 0, y: 0, scale: 1, baseScale: 1, objUrl: null };
+
+function onAvatarFile(input) {
+  const file = input.files && input.files[0];
+  input.value = ''; // allow re-selecting the same file later
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { showToast('Это не изображение'); return; }
+  if (file.size > AVATAR_MAX_INPUT) { showToast('Файл слишком большой (макс. 10 МБ)'); return; }
+  openCropper(file);
+}
+
+function openCropper(file) {
+  const img = new Image();
+  _crop.objUrl = URL.createObjectURL(file);
+  img.onload = () => {
+    const vp = document.getElementById('cropViewport').clientWidth; // square viewport, px
+    _crop.img = img;
+    _crop.vp = vp;
+    _crop.baseScale = Math.max(vp / img.naturalWidth, vp / img.naturalHeight); // cover
+    setCropZoom(1, true);              // also centers
+    document.getElementById('cropZoom').value = 1;
+    document.getElementById('cropModal').classList.remove('hidden');
+  };
+  img.onerror = () => { showToast('Не удалось открыть фото'); cleanupCrop(); };
+  img.src = _crop.objUrl;
+  document.getElementById('cropImg').src = _crop.objUrl;
+}
+
+function setCropZoom(zoom, center) {
+  _crop.scale = _crop.baseScale * zoom;
+  _crop.rw = _crop.img.naturalWidth * _crop.scale;
+  _crop.rh = _crop.img.naturalHeight * _crop.scale;
+  if (center) { _crop.x = (_crop.vp - _crop.rw) / 2; _crop.y = (_crop.vp - _crop.rh) / 2; }
+  clampCrop();
+  applyCropTransform();
+}
+
+function onCropZoom(v) {
+  // Keep the viewport centre anchored while zooming
+  const cx = (_crop.vp / 2 - _crop.x) / _crop.rw;
+  const cy = (_crop.vp / 2 - _crop.y) / _crop.rh;
+  _crop.scale = _crop.baseScale * parseFloat(v);
+  _crop.rw = _crop.img.naturalWidth * _crop.scale;
+  _crop.rh = _crop.img.naturalHeight * _crop.scale;
+  _crop.x = _crop.vp / 2 - cx * _crop.rw;
+  _crop.y = _crop.vp / 2 - cy * _crop.rh;
+  clampCrop();
+  applyCropTransform();
+}
+
+function clampCrop() {
+  _crop.x = Math.min(0, Math.max(_crop.vp - _crop.rw, _crop.x));
+  _crop.y = Math.min(0, Math.max(_crop.vp - _crop.rh, _crop.y));
+}
+
+function applyCropTransform() {
+  const el = document.getElementById('cropImg');
+  el.style.width = _crop.rw + 'px';
+  el.style.height = _crop.rh + 'px';
+  el.style.transform = `translate(${_crop.x}px, ${_crop.y}px)`;
+}
+
+// Drag to pan (pointer events cover mouse + touch)
+(function initCropDrag() {
+  let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
+  const vpId = 'cropViewport';
+  document.addEventListener('pointerdown', (e) => {
+    const vp = e.target.closest('#' + vpId);
+    if (!vp) return;
+    dragging = true; sx = e.clientX; sy = e.clientY; ox = _crop.x; oy = _crop.y;
+    vp.setPointerCapture(e.pointerId);
+  });
+  document.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    _crop.x = ox + (e.clientX - sx);
+    _crop.y = oy + (e.clientY - sy);
+    clampCrop();
+    applyCropTransform();
+  });
+  document.addEventListener('pointerup', () => { dragging = false; });
+  document.addEventListener('pointercancel', () => { dragging = false; });
+})();
+
+function cleanupCrop() {
+  if (_crop.objUrl) { URL.revokeObjectURL(_crop.objUrl); _crop.objUrl = null; }
+  _crop.img = null;
+}
+
+function cancelCrop() {
+  document.getElementById('cropModal').classList.add('hidden');
+  cleanupCrop();
+}
+
+async function confirmCrop() {
+  if (!_crop.img) return;
+  const okBtn = document.getElementById('cropOkBtn');
+  okBtn.disabled = true;
+  try {
+    // Map the circular/square viewport back to source pixels
+    const inv = _crop.img.naturalWidth / _crop.rw; // == naturalHeight / rh
+    const sx = -_crop.x * inv, sy = -_crop.y * inv, s = _crop.vp * inv;
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = AVATAR_OUT_SIZE;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(_crop.img, sx, sy, s, s, 0, 0, AVATAR_OUT_SIZE, AVATAR_OUT_SIZE);
+    const blob = await new Promise(res => {
+      canvas.toBlob(b => b ? res(b) : canvas.toBlob(j => res(j), 'image/jpeg', 0.85), 'image/webp', 0.85);
+    });
+    document.getElementById('cropModal').classList.add('hidden');
+    await uploadAvatarBlob(blob);
+  } catch (err) {
+    console.error(err);
+    showToast('Не удалось обработать фото');
+  } finally {
+    okBtn.disabled = false;
+    cleanupCrop();
+  }
+}
+
+function setAvatarLoading(on) {
+  const wrap = document.querySelector('.profile-avatar-wrap');
+  if (!wrap) return;
+  let el = wrap.querySelector('.avatar-loading');
+  if (on && !el) {
+    el = document.createElement('div');
+    el.className = 'avatar-loading';
+    el.innerHTML = '<div class="spinner-sm"></div>';
+    wrap.appendChild(el);
+  } else if (!on && el) { el.remove(); }
+}
+
+async function uploadAvatarBlob(blob) {
+  if (!currentUser) return;
+  setAvatarLoading(true);
+  try {
+    const ext = blob.type === 'image/webp' ? 'webp' : 'jpg';
+    const path = `${currentUser.id}.${ext}`;
+    const { error: upErr } = await sb.storage.from('avatars')
+      .upload(path, blob, { upsert: true, contentType: blob.type, cacheControl: '3600' });
+    if (upErr) throw upErr;
+    const { data: pub } = sb.storage.from('avatars').getPublicUrl(path);
+    const url = `${pub.publicUrl}?v=${Date.now()}`; // bust cache on overwrite
+    const { error: dbErr } = await sb.from('profiles').update({ avatar_url: url }).eq('id', currentUser.id);
+    if (dbErr) throw dbErr;
+    currentProfile.avatar_url = url;
+    renderProfile();
+    renderAppHeaderAvatar();
+    showToast('Фото обновлено');
+  } catch (err) {
+    console.error(err);
+    showToast('Ошибка загрузки фото');
+  } finally {
+    setAvatarLoading(false);
+  }
+}
+
+async function removeAvatar() {
+  if (!currentProfile || !currentProfile.avatar_url) return;
+  setAvatarLoading(true);
+  try {
+    // Best-effort delete of both possible extensions
+    await sb.storage.from('avatars').remove([`${currentUser.id}.webp`, `${currentUser.id}.jpg`]);
+    const { error } = await sb.from('profiles').update({ avatar_url: null }).eq('id', currentUser.id);
+    if (error) throw error;
+    currentProfile.avatar_url = null;
+    renderProfile();
+    renderAppHeaderAvatar();
+    showToast('Фото убрано');
+  } catch (err) {
+    console.error(err);
+    showToast('Не удалось убрать фото');
+  } finally {
+    setAvatarLoading(false);
+  }
+}
+
+function renderAppHeaderAvatar() {
+  const ha = document.getElementById('headerAvatar');
+  if (ha && currentProfile) ha.innerHTML = avatarImg(currentProfile, 36);
 }
 
 // ================================================================
