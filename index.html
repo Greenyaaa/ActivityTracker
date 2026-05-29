@@ -1967,13 +1967,15 @@ function openCropper(file) {
   const img = new Image();
   _crop.objUrl = URL.createObjectURL(file);
   img.onload = () => {
-    const vp = document.getElementById('cropViewport').clientWidth; // square viewport, px
     _crop.img = img;
+    // Show the modal FIRST — clientWidth is 0 while it's display:none,
+    // which would make the crop region (and the drawImage source) zero-sized.
+    document.getElementById('cropModal').classList.remove('hidden');
+    const vp = document.getElementById('cropViewport').clientWidth || 280; // measured visible
     _crop.vp = vp;
     _crop.baseScale = Math.max(vp / img.naturalWidth, vp / img.naturalHeight); // cover
-    setCropZoom(1, true);              // also centers
     document.getElementById('cropZoom').value = 1;
-    document.getElementById('cropModal').classList.remove('hidden');
+    setCropZoom(1, true);              // also centers
   };
   img.onerror = () => { showToast('Не удалось открыть фото'); cleanupCrop(); };
   img.src = _crop.objUrl;
