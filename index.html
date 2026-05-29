@@ -399,6 +399,7 @@ body {
 .setting-row { display: flex; align-items: center; justify-content: space-between; }
 .setting-row span { font-size: 14px; font-weight: 500; }
 .goal-pills.small .gpill { font-size: 11px; padding: 4px 8px; }
+.app-version { text-align: center; font-size: 11px; color: var(--text3); margin-bottom: 8px; }
 
 /* === AVATAR UPLOAD === */
 .profile-avatar-wrap { position: relative; width: 80px; height: 80px; margin: 0 auto 12px; }
@@ -815,6 +816,7 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
         <button class="btn-danger" style="margin:32px auto;display:block;width:100%" onclick="signOut()">
           <i class="ti ti-logout"></i> <span data-i18n="common.signOut">Выйти</span>
         </button>
+        <div class="app-version" id="appVersion"></div>
       </div>
 
     </div><!-- /tab-content -->
@@ -871,6 +873,7 @@ body.advanced .streak-ms-marker.reached .streak-ms-dot { background: var(--red);
 // ================================================================
 // CONFIG
 // ================================================================
+const APP_VERSION = '0.0.13'; // bump by 0.0.1 each commit; see CHANGELOG.md
 const SUPABASE_URL = 'https://zsazpltqcphcfivrqoyo.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_sWbGo4yWROeIaye_nl6AcA_Jle19J4n';
 const DICEBEAR_BASE = 'https://api.dicebear.com/7.x';
@@ -2517,6 +2520,8 @@ function rerenderForLang() {
 async function init() {
   currentLang = detectLang();
   applyTranslations();
+  const verEl = document.getElementById('appVersion');
+  if (verEl) verEl.textContent = 'v' + APP_VERSION;
   buildAvatarGrid();
 
   const loadStart = Date.now();
